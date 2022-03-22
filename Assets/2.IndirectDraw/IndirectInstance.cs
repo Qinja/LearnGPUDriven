@@ -35,4 +35,9 @@ public class IndirectInstance : MonoBehaviour
         }
         Graphics.DrawMeshInstancedIndirect(DMesh, 0, DMaterial,proxyBounds, indirectArgs);
     }
+    private void OnDisable()
+    {
+        indirectArgs.Release();
+        indirectArgs.Dispose();
+    }
 }

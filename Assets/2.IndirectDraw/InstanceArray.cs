@@ -6,6 +6,7 @@ public class InstanceArray : MonoBehaviour
 {
     public Mesh DMesh;
     public Material DMaterial;
+    [Range(1, 1023)]
     public int Count = 100;
 
     private Matrix4x4[] models;
@@ -17,6 +18,7 @@ public class InstanceArray : MonoBehaviour
     void InitInstance()
     {
         if (Count < 1) Count = 1;
+        if (Count > 1023) Count = 1023;
         models = new Matrix4x4[Count];
         var colors = new Vector4[Count];
         var parentPosition = transform.position;
