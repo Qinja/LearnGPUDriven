@@ -465,7 +465,7 @@ GameObject:
   m_Component:
   - component: {fileID: 352507230}
   m_Layer: 0
-  m_Name: DefaultDraw
+  m_Name: 0.1.DefaultDraw
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2232,7 +2232,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1939022934}
   m_Layer: 0
-  m_Name: DefaultDrawInstanced
+  m_Name: 0.2.DefaultDrawInstanced
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
