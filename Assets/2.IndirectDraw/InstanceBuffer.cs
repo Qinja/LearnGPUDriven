@@ -11,9 +11,9 @@ public class InstanceBuffer : MonoBehaviour
     private ComputeBuffer buffer;
     void Start()
     {
-        InitInstance();
+        UpdateInstance();
     }
-    void InitInstance()
+    void UpdateInstance()
     {
         if (Count < 1) Count = 1;
         if (Count > 511) Count = 511;
@@ -40,12 +40,12 @@ public class InstanceBuffer : MonoBehaviour
         if (Input.GetKey(KeyCode.UpArrow))
         {
             Count++;
-            InitInstance();
+            UpdateInstance();
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
             Count--;
-            InitInstance();
+            UpdateInstance();
         }
         Graphics.DrawMeshInstanced(DMesh, 0, DMaterial, models, Count);
     }

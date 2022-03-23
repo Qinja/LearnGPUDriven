@@ -11,9 +11,9 @@ public class InstanceArray : MonoBehaviour
     private MaterialPropertyBlock mpb;
     void Start()
     {
-        InitInstance();
+        UpdateInstance();
     }
-    void InitInstance()
+    void UpdateInstance()
     {
         if (Count < 1) Count = 1;
         if (Count > 1023) Count = 1023;
@@ -38,12 +38,12 @@ public class InstanceArray : MonoBehaviour
         if (Input.GetKey(KeyCode.UpArrow))
         {
             Count++;
-            InitInstance();
+            UpdateInstance();
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
             Count--;
-            InitInstance();
+            UpdateInstance();
         }
         Graphics.DrawMeshInstanced(DMesh, 0, DMaterial, models, Count, mpb);
     }

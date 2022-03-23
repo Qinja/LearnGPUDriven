@@ -13,9 +13,9 @@ public class IndirectInstanceBuffer : MonoBehaviour
     {
         proxyBounds = new Bounds(Vector3.zero, 100.0f * Vector3.one);
         indirectArgs = new ComputeBuffer(1, 5 * sizeof(int), ComputeBufferType.IndirectArguments);
-        InitInstance();
+        UpdateInstance();
     }
-    void InitInstance()
+    void UpdateInstance()
     {
         if (Count < 1) Count = 1;
         instanceBuffer?.Release();
@@ -40,12 +40,12 @@ public class IndirectInstanceBuffer : MonoBehaviour
         if (Input.GetKey(KeyCode.UpArrow))
         {
             Count++;
-            InitInstance();
+            UpdateInstance();
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
             Count--;
-            InitInstance();
+            UpdateInstance();
         }
         Graphics.DrawMeshInstancedIndirect(DMesh, 0, DMaterial,proxyBounds, indirectArgs);
     }
