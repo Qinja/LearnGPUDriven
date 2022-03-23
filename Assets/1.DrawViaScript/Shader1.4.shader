@@ -29,7 +29,7 @@ Shader "Unlit/Shader1.4"
                 uint instanceID : SV_InstanceID;
             };
 
-            float4 _Color[25];
+            float4 _Color[125];
 
             v2f vert(appdata v)
             {
