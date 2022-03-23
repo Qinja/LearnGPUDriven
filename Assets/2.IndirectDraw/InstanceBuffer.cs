@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class InstanceBuffer : MonoBehaviour
 {
     public Mesh DMesh;
     public Material DMaterial;
-    [Range(1, 1023)]
+    [Range(1, 511)]
     public int Count = 100;
 
     private Matrix4x4[] models;
@@ -18,7 +16,7 @@ public class InstanceBuffer : MonoBehaviour
     void InitInstance()
     {
         if (Count < 1) Count = 1;
-        if (Count > 1023) Count = 1023;
+        if (Count > 511) Count = 511;
         if(buffer != null)
         {
             buffer.Release();
@@ -26,7 +24,6 @@ public class InstanceBuffer : MonoBehaviour
             buffer = null;
         }
         models = new Matrix4x4[Count];
-        models[0] = Matrix4x4.identity;
         var paras = new InstancePara[Count];
         var parentPosition = transform.position;
         int row = Mathf.CeilToInt(Mathf.Sqrt(Count));
@@ -35,6 +32,7 @@ public class InstanceBuffer : MonoBehaviour
             for (int j = 0; j < row && k < Count; j++, k++)
             {
                 paras[k].position = parentPosition + new Vector3(0, i * 2, j * 2);
+                models[0] = Matrix4x4.identity;
                 paras[k].color = new Vector4(Random.Range(0.0f, 0.8f), Random.value, Random.value, 1.0f);
             }
         }
