@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LegacyMultiMesh : MonoBehaviour
@@ -14,10 +12,16 @@ public class LegacyMultiMesh : MonoBehaviour
     private Matrix4x4[] modelsB;
     private void Start()
     {
+        DMaterialA = Instantiate(DMaterial);
+        DMaterialB = Instantiate(DMaterial);
+        UpdateInstance();
+    }
+    private void UpdateInstance()
+    {
         modelsA = new Matrix4x4[125];
         modelsB = new Matrix4x4[125];
-        Vector4[] colorsA = new Vector4[125];
-        Vector4[] colorsB = new Vector4[125];
+        var colorsA = new Vector4[125];
+        var colorsB = new Vector4[125];
         var parentPosition = transform.position;
         for (int i = 0; i < 5; i++)
         {
@@ -32,13 +36,15 @@ public class LegacyMultiMesh : MonoBehaviour
                 }
             }
         }
-        DMaterialA = Instantiate(DMaterial);
-        DMaterialB = Instantiate(DMaterial);
         DMaterialA.SetVectorArray("_Color", colorsA);
         DMaterialB.SetVectorArray("_Color", colorsB);
     }
     void Update()
     {
+        if (Input.GetKeyUp(KeyCode.R))
+        {
+            UpdateInstance();
+        }
         Graphics.DrawMeshInstanced(DMeshA, 0, DMaterialA, modelsA);
         Graphics.DrawMeshInstanced(DMeshB, 0, DMaterialB, modelsB);
     }
