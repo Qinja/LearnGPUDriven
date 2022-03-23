@@ -18,12 +18,7 @@ public class IndirectInstanceBuffer : MonoBehaviour
     void InitInstance()
     {
         if (Count < 1) Count = 1;
-        if (instanceBuffer != null)
-        {
-            instanceBuffer.Release();
-            instanceBuffer.Dispose();
-            instanceBuffer = null;
-        }
+        instanceBuffer?.Release();
         var paras = new InstancePara[Count];
         var parentPosition = transform.position;
         int row = Mathf.CeilToInt(Mathf.Sqrt(Count));
@@ -38,7 +33,7 @@ public class IndirectInstanceBuffer : MonoBehaviour
         instanceBuffer = new ComputeBuffer(Count, InstancePara.SIZE);
         instanceBuffer.SetData(paras);
         DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
-        indirectArgs?.SetData(new int[5] { (int)DMesh.GetIndexCount(0), Count, 0, 0, 0 });
+        indirectArgs.SetData(new int[5] { (int)DMesh.GetIndexCount(0), Count, 0, 0, 0 });
     }
     void Update()
     {
@@ -56,10 +51,8 @@ public class IndirectInstanceBuffer : MonoBehaviour
     }
     private void OnDisable()
     {
-        indirectArgs.Release();
-        indirectArgs.Dispose();
-        instanceBuffer.Release();
-        instanceBuffer.Dispose();
+        indirectArgs?.Release();
+        instanceBuffer?.Release();
     }
     struct InstancePara
     {

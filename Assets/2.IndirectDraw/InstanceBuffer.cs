@@ -17,12 +17,7 @@ public class InstanceBuffer : MonoBehaviour
     {
         if (Count < 1) Count = 1;
         if (Count > 511) Count = 511;
-        if(buffer != null)
-        {
-            buffer.Release();
-            buffer.Dispose();
-            buffer = null;
-        }
+        buffer?.Release();
         models = new Matrix4x4[Count];
         var paras = new InstancePara[Count];
         var parentPosition = transform.position;
@@ -56,8 +51,7 @@ public class InstanceBuffer : MonoBehaviour
     }
     private void OnDisable()
     {
-        buffer.Release();
-        buffer.Dispose();
+        buffer?.Release();
     }
     struct InstancePara
     {
