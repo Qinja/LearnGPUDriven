@@ -40,11 +40,10 @@ Shader "Unlit/Shader2.3"
                 float3 offset = float3(0, 2.0f * floor(v.instanceID / row), 2.0f * (v.instanceID % row));
                 float3 worldPos = v.vertex.xyz + _ParentPosition + offset;
                 o.vertex = mul(UNITY_MATRIX_VP, float4(worldPos, 1));
-                float r = sin(1234.0f * v.instanceID);
-                float g = sin(5678.0f * v.instanceID);
-                float b = sin(9009.0f * v.instanceID);
-                fixed4 col = float4(0.5f * float3(r, g, b) + 0.5f, 1.0f);
-                col.r = 0.8f * col.r + 0.2f;
+                float r = frac(2345.0f * sin(1234.0f * v.instanceID)) * 0.8f + 0.2f;
+                float g = frac(6789.0f * sin(5678.0f * v.instanceID));
+                float b = frac(1369.0f * sin(9009.0f * v.instanceID));
+                fixed4 col = float4(r, g, b, 1);
                 o.color = col;
                 return o;
             }
