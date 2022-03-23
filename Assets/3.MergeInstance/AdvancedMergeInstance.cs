@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MergeInstance : MonoBehaviour
+public class AdvancedMergeInstance : MonoBehaviour
 {
     public Mesh DMeshA;     //sphere
     public Mesh DMeshB;     //capsule
     public Material DMaterial;
 
+    private Matrix4x4[] models;
     private ComputeBuffer instanceBuffer;
     private ComputeBuffer vbobuffer;
     private ComputeBuffer ibobuffer;
@@ -16,10 +17,9 @@ public class MergeInstance : MonoBehaviour
     private void Start()
     {
         InitMergeMesh();
-        UpdateProxyMesh();
+        InitProxyMesh();
         UpdateInstance();
     }
-
     private void InitMergeMesh()
     {
         var iboA = DMeshA.triangles;
@@ -59,19 +59,15 @@ public class MergeInstance : MonoBehaviour
         DMaterial.SetBuffer("_VBO", vbobuffer);
         DMaterial.SetBuffer("_IBO", ibobuffer);
     }
-    private void UpdateProxyMesh()
+    private void InitProxyMesh()
     {
         proxyMesh = new Mesh();
-        var p_vbo = new Vector3[VSIZE * 125 * 2];
-        var p_ibo = new int[VSIZE * 125 * 2];
-        for (int i = 0; i < VSIZE * 125 * 2; i++)
+        var p_vbo = new Vector3[VSIZE];
+        var p_ibo = new int[VSIZE];
+        for (int i = 0; i < VSIZE; i++)
         {
             p_vbo[i] = new Vector3(Random.value, Random.value, Random.value);
             p_ibo[i] = i;
-        }
-        if(VSIZE * 125 * 2 >= ushort.MaxValue)
-        {
-            proxyMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         }
         proxyMesh.vertices = p_vbo;
         proxyMesh.triangles = p_ibo;
@@ -79,7 +75,7 @@ public class MergeInstance : MonoBehaviour
     }
     private void UpdateInstance()
     {
-        var models = new Matrix4x4[125 * 2];
+        models = new Matrix4x4[125 * 2];
         var parentPosition = transform.position;
         for (int i = 0; i < 5; i++)
         {
@@ -96,10 +92,9 @@ public class MergeInstance : MonoBehaviour
         for (int i = 0; i < 125 * 2; i++)
         {
             instanceParas[i].index_offset = i < 125 ? 0 : VSIZE;
-            instanceParas[i].model = models[i];
             instanceParas[i].color = new Vector4(i < 125 ? Random.value : Random.Range(0.1f, 0.6f), Random.value, Random.Range(0.2f, 1.0f), 1);
         }
-        if (instanceBuffer == null)
+        if(instanceBuffer == null)
         {
             instanceBuffer = new ComputeBuffer(125 * 2, InstancePara.SIZE);
             DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
@@ -108,12 +103,11 @@ public class MergeInstance : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.R))
+        if(Input.GetKeyUp(KeyCode.R))
         {
-            UpdateProxyMesh();
             UpdateInstance();
         }
-        Graphics.DrawMesh(proxyMesh, Matrix4x4.identity, DMaterial, 0);
+        Graphics.DrawMeshInstanced(proxyMesh, 0, DMaterial, models);
     }
     private void OnDisable()
     {
@@ -124,8 +118,7 @@ public class MergeInstance : MonoBehaviour
     struct InstancePara
     {
         public uint index_offset;
-        public Matrix4x4 model;
         public Vector4 color;
-        public const int SIZE = sizeof(uint) + 16 * sizeof(float) + 4 * sizeof(float);
+        public const int SIZE = sizeof(uint) + 4 * sizeof(float);
     }
 }
