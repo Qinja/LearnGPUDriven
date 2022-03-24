@@ -21,7 +21,7 @@ public class IndirectInstanceBuffer : MonoBehaviour
         instanceBuffer?.Release();
         var paras = new InstancePara[Count];
         var parentPosition = transform.position;
-        int row = Mathf.CeilToInt(Mathf.Sqrt(Count));
+        int row = Mathf.FloorToInt(Mathf.Sqrt(Count - 1)) + 1;
         for (int i = 0, k = 0; i < row; i++)
         {
             for (int j = 0; j < row && k < Count; j++, k++)
