@@ -2,12 +2,12 @@ Shader "Unlit/Shader0.1"
 {
     Properties
     {
-        _Color ("Color", Color) = (0, 1, 1, 1)
+        _Color("Color", Color) = (0, 1, 1, 1)
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
-        
+        Tags { "RenderType" = "Opaque" }
+
         Pass
         {
             CGPROGRAM
@@ -28,7 +28,7 @@ Shader "Unlit/Shader0.1"
 
             float4 _Color;
 
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);

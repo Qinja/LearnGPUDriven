@@ -2,12 +2,12 @@ Shader "Unlit/Shader0.2 "
 {
     Properties
     {
-        _Color ("Color", Color) = (0, 1, 1, 1)
+        _Color("Color", Color) = (0, 1, 1, 1)
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
-        
+        Tags { "RenderType" = "Opaque" }
+
         Pass
         {
             CGPROGRAM
@@ -30,7 +30,7 @@ Shader "Unlit/Shader0.2 "
 
             float4 _Color;
 
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 UNITY_SETUP_INSTANCE_ID(v)
                 v2f o;
