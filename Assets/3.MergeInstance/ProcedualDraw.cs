@@ -8,8 +8,8 @@ public class ProcedualDraw : MonoBehaviour
 
     private Matrix4x4[] models;
     private ComputeBuffer instanceBuffer;
-    private ComputeBuffer vbobuffer;
-    private ComputeBuffer ibobuffer;
+    private ComputeBuffer vboBuffer;
+    private ComputeBuffer iboBuffer;
     private const uint VSIZE = 2496;
     private Bounds proxyBounds;
     private void Start()
@@ -50,25 +50,25 @@ public class ProcedualDraw : MonoBehaviour
         {
             vbo[i + vboA.Length] = vboB[i];
         }
-        vbobuffer = new ComputeBuffer(vbo.Length, 3 * sizeof(float));
-        ibobuffer = new ComputeBuffer(ibo.Length, sizeof(int));
-        vbobuffer.SetData(vbo);
-        ibobuffer.SetData(ibo);
-        DMaterial.SetBuffer("_VBO", vbobuffer);
-        DMaterial.SetBuffer("_IBO", ibobuffer);
+        vboBuffer = new ComputeBuffer(vbo.Length, 3 * sizeof(float));
+        iboBuffer = new ComputeBuffer(ibo.Length, sizeof(int));
+        vboBuffer.SetData(vbo);
+        iboBuffer.SetData(ibo);
+        DMaterial.SetBuffer("_VBO", vboBuffer);
+        DMaterial.SetBuffer("_IBO", iboBuffer);
     }
     private void UpdateInstance()
     {
         models = new Matrix4x4[125 * 2];
         var parentPosition = transform.position;
-        for (int i = 0; i < 5; i++)
+        for (int i = 0, n = 0; i < 5; i++)
         {
             for (int j = 0; j < 5; j++)
             {
-                for (int k = 0; k < 5; k++)
+                for (int k = 0; k < 5; k++, n++)
                 {
-                    models[25 * i + 5 * j + k] = Matrix4x4.TRS(parentPosition + 2.0f * new Vector3(i - 5, j, k), Quaternion.identity, Vector3.one * Random.Range(0.5f, 1.0f));
-                    models[125 + 25 * i + 5 * j + k] = Matrix4x4.TRS(parentPosition + 2.0f * new Vector3(i + 5, j, k), Random.rotationUniform, Vector3.one * Random.Range(0.5f, 1.0f));
+                    models[n] = Matrix4x4.TRS(parentPosition + 2.0f * new Vector3(i - 5, j, k), Quaternion.identity, Vector3.one * Random.Range(0.5f, 1.0f));
+                    models[125 + n] = Matrix4x4.TRS(parentPosition + 2.0f * new Vector3(i + 5, j, k), Random.rotationUniform, Vector3.one * Random.Range(0.5f, 1.0f));
                 }
             }
         }
@@ -97,8 +97,8 @@ public class ProcedualDraw : MonoBehaviour
     private void OnDisable()
     {
         instanceBuffer?.Release();
-        vbobuffer?.Release();
-        ibobuffer?.Release();
+        vboBuffer?.Release();
+        iboBuffer?.Release();
     }
     struct InstancePara
     {

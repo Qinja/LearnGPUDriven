@@ -8,7 +8,7 @@ public class InstanceBuffer : MonoBehaviour
     public int Count = 100;
 
     private Matrix4x4[] models;
-    private ComputeBuffer buffer;
+    private ComputeBuffer instanceBuffer;
     void Start()
     {
         UpdateInstance();
@@ -17,7 +17,7 @@ public class InstanceBuffer : MonoBehaviour
     {
         if (Count < 1) Count = 1;
         if (Count > 511) Count = 511;
-        buffer?.Release();
+        instanceBuffer?.Release();
         models = new Matrix4x4[Count];
         var paras = new InstancePara[Count];
         var parentPosition = transform.position;
@@ -31,9 +31,9 @@ public class InstanceBuffer : MonoBehaviour
                 paras[k].color = new Vector4(Random.Range(0.0f, 0.8f), Random.value, Random.value, 1.0f);
             }
         }
-        buffer = new ComputeBuffer(Count, InstancePara.SIZE);
-        buffer.SetData(paras);
-        DMaterial.SetBuffer("_InstanceBuffer", buffer);
+        instanceBuffer = new ComputeBuffer(Count, InstancePara.SIZE);
+        instanceBuffer.SetData(paras);
+        DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
     }
     void Update()
     {
@@ -51,7 +51,7 @@ public class InstanceBuffer : MonoBehaviour
     }
     private void OnDisable()
     {
-        buffer?.Release();
+        instanceBuffer?.Release();
     }
     struct InstancePara
     {

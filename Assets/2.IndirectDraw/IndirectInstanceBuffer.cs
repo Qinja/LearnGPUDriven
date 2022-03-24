@@ -7,12 +7,12 @@ public class IndirectInstanceBuffer : MonoBehaviour
     public int Count;
 
     private Bounds proxyBounds;
-    private ComputeBuffer indirectArgs;
+    private ComputeBuffer argsBuffer;
     private ComputeBuffer instanceBuffer;
     void Start()
     {
         proxyBounds = new Bounds(Vector3.zero, 100.0f * Vector3.one);
-        indirectArgs = new ComputeBuffer(1, 5 * sizeof(int), ComputeBufferType.IndirectArguments);
+        argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
         UpdateInstance();
     }
     void UpdateInstance()
@@ -33,7 +33,7 @@ public class IndirectInstanceBuffer : MonoBehaviour
         instanceBuffer = new ComputeBuffer(Count, InstancePara.SIZE);
         instanceBuffer.SetData(paras);
         DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
-        indirectArgs.SetData(new int[5] { (int)DMesh.GetIndexCount(0), Count, 0, 0, 0 });
+        argsBuffer.SetData(new uint[5] { DMesh.GetIndexCount(0), (uint)Count, 0, 0, 0 });
     }
     void Update()
     {
@@ -47,11 +47,11 @@ public class IndirectInstanceBuffer : MonoBehaviour
             Count--;
             UpdateInstance();
         }
-        Graphics.DrawMeshInstancedIndirect(DMesh, 0, DMaterial,proxyBounds, indirectArgs);
+        Graphics.DrawMeshInstancedIndirect(DMesh, 0, DMaterial,proxyBounds, argsBuffer);
     }
     private void OnDisable()
     {
-        indirectArgs?.Release();
+        argsBuffer?.Release();
         instanceBuffer?.Release();
     }
     struct InstancePara

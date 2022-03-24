@@ -23,16 +23,16 @@ public class LegacyMultiMesh : MonoBehaviour
         var colorsA = new Vector4[125];
         var colorsB = new Vector4[125];
         var parentPosition = transform.position;
-        for (int i = 0; i < 5; i++)
+        for (int i = 0, n = 0; i < 5; i++)
         {
             for (int j = 0; j < 5; j++)
             {
-                for (int k = 0; k < 5; k++)
+                for (int k = 0; k < 5; k++, n++)
                 {
-                    modelsA[25 * i + 5 * j + k] = Matrix4x4.TRS(parentPosition + 2.0f * new Vector3(i - 5, j, k), Quaternion.identity, Vector3.one * Random.Range(0.5f, 1.0f));
-                    modelsB[25 * i + 5 * j + k] = Matrix4x4.TRS(parentPosition + 2.0f * new Vector3(i + 5, j, k), Random.rotationUniform, Vector3.one * Random.Range(0.5f, 1.0f));
-                    colorsA[25 * i + 5 * j + k] = new Vector4(Random.Range(0.0f, 0.7f), Random.Range(0.2f, 1.0f), Random.Range(0.3f, 1.0f), 1);
-                    colorsB[25 * i + 5 * j + k] = new Vector4(Random.Range(0.7f, 1.0f), Random.Range(0.3f, 0.8f), Random.Range(0.0f, 0.4f), 1);
+                    modelsA[n] = Matrix4x4.TRS(parentPosition + 2.0f * new Vector3(i - 5, j, k), Quaternion.identity, Vector3.one * Random.Range(0.5f, 1.0f));
+                    modelsB[n] = Matrix4x4.TRS(parentPosition + 2.0f * new Vector3(i + 5, j, k), Random.rotationUniform, Vector3.one * Random.Range(0.5f, 1.0f));
+                    colorsA[n] = new Vector4(Random.Range(0.0f, 0.7f), Random.Range(0.2f, 1.0f), Random.Range(0.3f, 1.0f), 1);
+                    colorsB[n] = new Vector4(Random.Range(0.7f, 1.0f), Random.Range(0.3f, 0.8f), Random.Range(0.0f, 0.4f), 1);
                 }
             }
         }

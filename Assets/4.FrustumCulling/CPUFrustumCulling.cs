@@ -19,7 +19,7 @@ public class CPUFrustumCulling : MonoBehaviour
     private void UpdateInstance()
     {
         if (Count < 1) Count = 1;
-         instanceParas = new InstancePara[Count];
+        instanceParas = new InstancePara[Count];
         var row = Mathf.FloorToInt(Mathf.Pow(Count - 1, 1.0f / 3.0f)) + 1;
         var parentPosition = transform.position;
         for (int i = 0, n = 0; i < row; i++)
@@ -28,8 +28,8 @@ public class CPUFrustumCulling : MonoBehaviour
             {
                 for (int k = 0; k < row && n < Count; k++, n++)
                 {
-                    instanceParas[row * row * i + row * j + k].model = Matrix4x4.TRS(parentPosition + 2.0f * new Vector3(i, j, k), Quaternion.identity, Vector3.one * Random.Range(0.5f, 1.0f));
-                    instanceParas[row * row * i + row * j + k].color = new Vector4(Random.Range(0.3f, 0.6f), Random.value, Random.Range(0.7f, 1.0f), 1);
+                    instanceParas[n].model = Matrix4x4.TRS(parentPosition + 2.0f * new Vector3(i, j, k), Quaternion.identity, Vector3.one * Random.Range(0.5f, 1.0f));
+                    instanceParas[n].color = new Vector4(Random.Range(0.3f, 0.6f), Random.value, Random.Range(0.7f, 1.0f), 1);
                 }
             }
         }
@@ -83,7 +83,7 @@ public class CPUFrustumCulling : MonoBehaviour
             Vector3 normalAbs = new Vector3(Mathf.Abs(planeLocal.x), Mathf.Abs(planeLocal.y), Mathf.Abs(planeLocal.z));
             float radius = Vector3.Dot(normalAbs, boxLocal.extents);
             float dist = Vector3.Dot(planeLocal, boxLocal.center) + planeLocal.w;
-            if (radius + dist < 0) 
+            if (radius + dist <= 0) 
             {
                 return false;
             }
