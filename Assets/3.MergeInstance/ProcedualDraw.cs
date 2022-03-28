@@ -79,7 +79,7 @@ public class ProcedualDraw : MonoBehaviour
             instanceParas[i].model = models[i];
             instanceParas[i].color = new Vector4(i < 125 ? Random.value : Random.Range(0.1f, 0.3f), Random.value, Random.Range(0.7f, 1.0f), 1);
         }
-        if(instanceBuffer == null)
+        if (instanceBuffer == null)
         {
             instanceBuffer = new ComputeBuffer(125 * 2, InstancePara.SIZE);
             DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
@@ -88,7 +88,7 @@ public class ProcedualDraw : MonoBehaviour
     }
     void Update()
     {
-        if(Input.GetKeyUp(KeyCode.R))
+        if (Input.GetKeyUp(KeyCode.R))
         {
             UpdateInstance();
         }

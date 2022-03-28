@@ -67,7 +67,7 @@ public class MergeInstance : MonoBehaviour
             p_vbo[i] = new Vector3(Random.value, Random.value, Random.value);
             p_ibo[i] = i;
         }
-        if(VSIZE * 125 * 2 >= ushort.MaxValue)
+        if (VSIZE * 125 * 2 >= ushort.MaxValue)
         {
             proxyMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         }

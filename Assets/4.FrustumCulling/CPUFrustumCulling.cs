@@ -22,6 +22,7 @@ public class CPUFrustumCulling : MonoBehaviour
         instanceParas = new InstancePara[Count];
         var row = Mathf.FloorToInt(Mathf.Pow(Count - 1, 1.0f / 3.0f)) + 1;
         var parentPosition = transform.position;
+        Random.InitState(0);
         for (int i = 0, n = 0; i < row; i++)
         {
             for (int j = 0; j < row; j++)
@@ -41,17 +42,17 @@ public class CPUFrustumCulling : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            Count++;
+            Count = Count + Count / 10;
             UpdateInstance();
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
-            Count--;
+            Count = Count - Count / 10;
             UpdateInstance();
         }
         GeometryUtility.CalculateFrustumPlanes(DCamera, cullingPlanes);
         var visibleCount = CPUFrustumCull();
-        if(visibleCount > 0)
+        if (visibleCount > 0)
         {
             Graphics.DrawMeshInstancedProcedural(DMesh, 0, DMaterial, proxyBounds, visibleCount);
         }
@@ -69,7 +70,7 @@ public class CPUFrustumCulling : MonoBehaviour
                 instanceParasResult[visibleCount++] = instanceParas[i];
             }
         }
-        if(visibleCount > 0)
+        if (visibleCount > 0)
         {
             instanceBuffer.SetData(instanceParasResult);
         }
@@ -83,7 +84,7 @@ public class CPUFrustumCulling : MonoBehaviour
             Vector3 normalAbs = new Vector3(Mathf.Abs(planeLocal.x), Mathf.Abs(planeLocal.y), Mathf.Abs(planeLocal.z));
             float radius = Vector3.Dot(normalAbs, boxLocal.extents);
             float dist = Vector3.Dot(planeLocal, boxLocal.center) + planeLocal.w;
-            if (radius + dist <= 0) 
+            if (radius + dist <= 0)
             {
                 return false;
             }

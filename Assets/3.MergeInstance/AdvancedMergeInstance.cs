@@ -92,7 +92,7 @@ public class AdvancedMergeInstance : MonoBehaviour
             instanceParas[i].index_offset = i < 125 ? 0 : VSIZE;
             instanceParas[i].color = new Vector4(i < 125 ? Random.value : Random.Range(0.1f, 0.6f), Random.value, Random.Range(0.2f, 1.0f), 1);
         }
-        if(instanceBuffer == null)
+        if (instanceBuffer == null)
         {
             instanceBuffer = new ComputeBuffer(125 * 2, InstancePara.SIZE);
             DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
@@ -101,7 +101,7 @@ public class AdvancedMergeInstance : MonoBehaviour
     }
     void Update()
     {
-        if(Input.GetKeyUp(KeyCode.R))
+        if (Input.GetKeyUp(KeyCode.R))
         {
             UpdateInstance();
         }

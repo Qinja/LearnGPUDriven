@@ -36,6 +36,7 @@ public class GPUFrustumCulling : MonoBehaviour
         var instanceParas = new InstancePara[Count];
         var row = Mathf.FloorToInt(Mathf.Pow(Count - 1, 1.0f / 3.0f)) + 1;
         var parentPosition = transform.position;
+        Random.InitState(0);
         for (int i = 0, n = 0; i < row; i++)
         {
             for (int j = 0; j < row; j++)
@@ -74,12 +75,12 @@ public class GPUFrustumCulling : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            Count++;
+            Count = Count + Count / 10;
             UpdateInstance();
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
-            Count--;
+            Count = Count - Count / 10;
             UpdateInstance();
         }
         UpdateCullingPlane();

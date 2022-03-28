@@ -22,6 +22,7 @@ public class InstanceBuffer : MonoBehaviour
         var paras = new InstancePara[Count];
         var parentPosition = transform.position;
         int row = Mathf.FloorToInt(Mathf.Sqrt(Count - 1)) + 1;
+        Random.InitState(0);
         for (int i = 0, k = 0; i < row; i++)
         {
             for (int j = 0; j < row && k < Count; j++, k++)
