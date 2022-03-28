@@ -152,7 +152,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f42397f409bbd5498f3a4b0fab14dcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DCamera: {fileID: 963194227}
   DClusters: {fileID: 11400000, guid: ad620528eb923b647acdc2e9b4f13ee3, type: 2}
   DMaterial: {fileID: 2100000, guid: bd114d5c9b9e53f45a3d8f8fbd628bc9, type: 2}
   Count: 100

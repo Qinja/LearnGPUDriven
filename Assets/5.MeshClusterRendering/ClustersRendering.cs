@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class ClustersRendering : MonoBehaviour
 {
-    public Camera DCamera;
     public ClustersData DClusters;
     public Material DMaterial;
     public int Count;
