@@ -176,27 +176,28 @@ public class ClustersDataGenerator
                 });
             }
         });
-        var outClusters = new Vector3[quadLists.Count * QUAD_COUNT * 4];
+        var clusters = new Vector3[quadLists.Count * QUAD_COUNT * 4];
         var boxes = new Bounds[quadLists.Count];
         for (int i = 0, n = 0; i < quadLists.Count; i++)
         {
             boxes[i] = new Bounds(quadLists[i][0].vt1, Vector3.zero);
             foreach (var quadList in quadLists[i])
             {
-                outClusters[n++] = quadList.vt1;
-                outClusters[n++] = quadList.vt2;
-                outClusters[n++] = quadList.vt3;
-                outClusters[n++] = quadList.vt4;
+                clusters[n++] = quadList.vt1;
+                clusters[n++] = quadList.vt2;
+                clusters[n++] = quadList.vt3;
+                clusters[n++] = quadList.vt4;
                 boxes[i].Encapsulate(quadList.vt1);
                 boxes[i].Encapsulate(quadList.vt2);
                 boxes[i].Encapsulate(quadList.vt3);
                 boxes[i].Encapsulate(quadList.vt4);
             }
         }
-        ClustersData outMesh = ScriptableObject.CreateInstance<ClustersData>();
-        outMesh.Vertices = outClusters;
-        outMesh.QuadsPerCluster = QUAD_COUNT;
-        outMesh.BoundingBoxes = boxes;
-        return outMesh;
+        ClustersData outData = ScriptableObject.CreateInstance<ClustersData>();
+        outData.Vertices = clusters;
+        outData.QuadsPerCluster = QUAD_COUNT;
+        outData.BoundingBoxes = boxes;
+        outData.Count = quadLists.Count;
+        return outData;
     }
 }

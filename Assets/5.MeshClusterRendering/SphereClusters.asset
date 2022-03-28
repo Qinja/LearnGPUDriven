@@ -15,6 +15,7 @@ MonoBehaviour:
   RawMesh: {fileID: 4300000, guid: 054e495dbcb24854f863805ab3978fe7, type: 2}
   Name: SphereMesh_Clusters
   QuadsPerCluster: 16
+  Count: 30
   Vertices:
   - {x: 0.19199951, y: -0.45026365, z: -0.09450744}
   - {x: 0.10079467, y: -0.4882324, z: -0.000000009536743}
