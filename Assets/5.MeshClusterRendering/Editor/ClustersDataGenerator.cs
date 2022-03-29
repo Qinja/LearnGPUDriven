@@ -165,14 +165,15 @@ public class ClustersDataGenerator
         quadLists.ForEach(list =>
         {
             var add = QUAD_COUNT - list.Count;
+            var lastVertex = list[list.Count - 1].vt4;
             for (int j = 0; j < add; j++)
             {
                 list.Add(new Quad()
                 {
-                    vt1 = Vector3.zero,
-                    vt2 = Vector3.zero,
-                    vt3 = Vector3.zero,
-                    vt4 = Vector3.zero
+                    vt1 = lastVertex,
+                    vt2 = lastVertex,
+                    vt3 = lastVertex,
+                    vt4 = lastVertex
                 });
             }
         });
@@ -187,7 +188,7 @@ public class ClustersDataGenerator
                 clusters[n++] = quadList.vt2;
                 clusters[n++] = quadList.vt3;
                 clusters[n++] = quadList.vt4;
-                if(quadList.vt1 != Vector3.zero && quadList.vt2 != Vector3.zero && quadList.vt3 != Vector3.zero && quadList.vt4 != Vector3.zero)
+                if(quadList.vt1 != quadList.vt2 && quadList.vt1 != quadList.vt3 && quadList.vt1 != quadList.vt4)
                 {
                     boxes[i].Encapsulate(quadList.vt1);
                     boxes[i].Encapsulate(quadList.vt2);
