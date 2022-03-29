@@ -14,12 +14,12 @@ float3 _BoundsCenter;
 float3 _BoundsExtent;
 float4 _CullingPlanes[6];
 
-inline bool PlaneTest(float4 plane, float3 boundsCenter, float3 boundsExtent, float4x4 model)
+inline bool PlaneTest(float4 planeWorld, float3 boundsCenterLocal, float3 boundsExtentLocal, float4x4 modelTranspose)
 {
-	float4 planeLocal = mul(model,plane);
+	float4 planeLocal = mul(modelTranspose, planeWorld);
 	float3 normalAbs = abs(planeLocal.xyz);
-	float radius = dot(normalAbs, boundsExtent);
-	float dist = dot(planeLocal.xyz, boundsCenter) + planeLocal.w;
+	float radius = dot(normalAbs, boundsExtentLocal);
+	float dist = dot(planeLocal.xyz, boundsCenterLocal) + planeLocal.w;
 	return radius + dist > 0;
 }
 
@@ -30,7 +30,7 @@ void FrustumCullMain(uint3 id : SV_DispatchThreadID)
 	{
 		float4x4 mT = transpose(_InstanceBuffer[id.x].model);
 		[unroll]
-		for (int i = 0; i < 6; i++) 
+		for (int i = 0; i < 6; i++)
 		{
 			if (!PlaneTest(_CullingPlanes[i], _BoundsCenter, _BoundsExtent, mT))
 			{
