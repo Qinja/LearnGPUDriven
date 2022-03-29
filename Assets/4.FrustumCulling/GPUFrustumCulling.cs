@@ -75,12 +75,12 @@ public class GPUFrustumCulling : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            Count = Count + Count / 10;
+            Count = Count + Mathf.Max(Count / 10, 1);
             UpdateInstance();
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
-            Count = Count - Count / 10;
+            Count = Count - Mathf.Max(Count / 10, 1);
             UpdateInstance();
         }
         UpdateCullingPlane();

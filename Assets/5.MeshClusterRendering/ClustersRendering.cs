@@ -51,12 +51,12 @@ public class ClustersRendering : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            Count++;
+            Count = Count + Mathf.Max(Count / 10, 1);
             UpdateInstance();
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
-            Count--;
+            Count = Count - Mathf.Max(Count / 10, 1);
             UpdateInstance();
         }
         Graphics.DrawProcedural(DMaterial, proxyBounds, MeshTopology.Quads, CLUSTER_VERTEX_COUNT, Count * DClusters.Count);
