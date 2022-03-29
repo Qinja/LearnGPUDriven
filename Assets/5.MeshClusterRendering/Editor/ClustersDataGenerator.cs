@@ -187,10 +187,13 @@ public class ClustersDataGenerator
                 clusters[n++] = quadList.vt2;
                 clusters[n++] = quadList.vt3;
                 clusters[n++] = quadList.vt4;
-                boxes[i].Encapsulate(quadList.vt1);
-                boxes[i].Encapsulate(quadList.vt2);
-                boxes[i].Encapsulate(quadList.vt3);
-                boxes[i].Encapsulate(quadList.vt4);
+                if(quadList.vt1 != Vector3.zero && quadList.vt2 != Vector3.zero && quadList.vt3 != Vector3.zero && quadList.vt4 != Vector3.zero)
+                {
+                    boxes[i].Encapsulate(quadList.vt1);
+                    boxes[i].Encapsulate(quadList.vt2);
+                    boxes[i].Encapsulate(quadList.vt3);
+                    boxes[i].Encapsulate(quadList.vt4);
+                }
             }
         }
         ClustersData outData = ScriptableObject.CreateInstance<ClustersData>();

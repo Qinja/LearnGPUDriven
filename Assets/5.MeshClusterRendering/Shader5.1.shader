@@ -12,9 +12,6 @@ Shader "Unlit/Shader5.1"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma shader_feature INSTANCING_ON
-            #define UNITY_INSTANCING_ENABLED
-            #define UNITY_DONT_INSTANCE_OBJECT_MATRICES
 
             #include "UnityCG.cginc"
 
