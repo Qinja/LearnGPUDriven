@@ -1,0 +1,73 @@
+#pragma kernel FrustumCullMain
+#define KERNEL_SIZE_X 64
+#define MAX_CLUSTER_COUNT 64
+
+struct InstancePara
+{
+	float4x4 model;
+	float4 padding_for_other_para;
+};
+struct BoundingBox
+{
+	float3 center;
+	float3 extent;
+};
+StructuredBuffer<BoundingBox> _BoundingBoxes;
+StructuredBuffer<InstancePara> _InstanceBuffer;
+RWStructuredBuffer<uint> _ArgsBuffer;
+RWStructuredBuffer<uint> _VisibilityBuffer;
+uint _Count;
+float4 _CullingPlanes[6];
+uint _ClusterCount;
+
+inline bool PlaneTest(float4 planeLocal, float3 boundsCenterLocal, float3 boundsExtentLocal)
+{
+	float3 normalAbs = abs(planeLocal.xyz);
+	float radius = dot(normalAbs, boundsExtentLocal);
+	float dist = dot(planeLocal.xyz, boundsCenterLocal) + planeLocal.w;
+	return radius + dist > 0;
+}
+
+[numthreads(KERNEL_SIZE_X, 1, 1)]
+void FrustumCullMain(uint3 id : SV_DispatchThreadID)
+{
+	if (id.x < _Count)
+	{
+		float4x4 modelTranspose = transpose(_InstanceBuffer[id.x].model);
+		for (uint i = 0; i < 6; i++)
+		{
+			_CullingPlanes[i] = mul(modelTranspose, _CullingPlanes[i]);
+		}
+		uint visibleCount = 0;
+		uint visibleArray[MAX_CLUSTER_COUNT];
+		uint clusterOffset = id.x * _ClusterCount;
+		for (uint n = 0; n < _ClusterCount; n++)
+		{
+			BoundingBox bounds = _BoundingBoxes[n];
+			bool visible = true;
+			[unroll]
+			for (uint i = 0; i < 6; i++)
+			{
+				if (!PlaneTest(_CullingPlanes[i], bounds.center, bounds.extent))
+				{
+					visible = false;
+					break;
+				}
+			}
+			if (visible)
+			{
+				visibleArray[visibleCount] = clusterOffset + n;
+				visibleCount++;
+			}
+		}
+		if (visibleCount > 0)
+		{
+			uint currentIndex = 0;
+			InterlockedAdd(_ArgsBuffer[1], visibleCount, currentIndex);
+			for (uint i = 0; i < visibleCount; i++)
+			{
+				_VisibilityBuffer[currentIndex + i] = visibleArray[i];
+			}
+		}
+	}
+}
