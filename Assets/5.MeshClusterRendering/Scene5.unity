@@ -202,7 +202,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DClusters: {fileID: 11400000, guid: ad620528eb923b647acdc2e9b4f13ee3, type: 2}
   DMaterial: {fileID: 2100000, guid: bd114d5c9b9e53f45a3d8f8fbd628bc9, type: 2}
-  Count: 100
+  Count: 1000
 --- !u!4 &641089882
 Transform:
   m_ObjectHideFlags: 0
@@ -323,7 +323,7 @@ Transform:
   m_Children:
   - {fileID: 215737167}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1245735770
 GameObject:
@@ -372,5 +372,58 @@ MonoBehaviour:
   DCamera: {fileID: 963194227}
   DClusters: {fileID: 11400000, guid: ad620528eb923b647acdc2e9b4f13ee3, type: 2}
   DMaterial: {fileID: 2100000, guid: e3135fc7e7242f1469ea6b8e90d4faf4, type: 2}
-  Count: 10000
+  Count: 1000
   DComputeShader: {fileID: 7200000, guid: 41144b2d0646f4a43be8fe402bfdf55e, type: 3}
+--- !u!1 &1861125997
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1861125998}
+  - component: {fileID: 1861125999}
+  m_Layer: 0
+  m_Name: 5.3.MultiMeshClusters
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1861125998
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1861125997}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1861125999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1861125997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1372d5215d9d434fb3fedae273db1d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DCamera: {fileID: 963194227}
+  DClusters:
+  - {fileID: 11400000, guid: ad620528eb923b647acdc2e9b4f13ee3, type: 2}
+  - {fileID: 11400000, guid: 682fc295d2d57eb47a3461b49401d4f8, type: 2}
+  - {fileID: 11400000, guid: d97e46850bdab3042b08d58b84c766fb, type: 2}
+  - {fileID: 11400000, guid: ed8f1094a2286db44a45e76832278191, type: 2}
+  DMaterial: {fileID: 2100000, guid: ca76409c5e11db94ca91590fdfff1306, type: 2}
+  Count: 1000
+  DComputeShader: {fileID: 7200000, guid: 279e3969e37dcf54688688a62a18926f, type: 3}

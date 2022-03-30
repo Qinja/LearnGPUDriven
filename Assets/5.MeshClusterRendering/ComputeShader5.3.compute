@@ -1,0 +1,55 @@
+#pragma kernel FrustumCullMain
+#define KERNEL_SIZE_X 64
+#define CLUSTER_VERTEX_COUNT 64
+
+struct InstancePara
+{
+	float4x4 model;
+	float4 padding_for_other_para;
+	uint vertexOffset;
+	uint clusterIndex;
+};
+struct BoundingBox
+{
+	float3 center;
+	float3 extent;
+};
+StructuredBuffer<BoundingBox> _BoundingBoxes;
+StructuredBuffer<InstancePara> _InstanceBuffer;
+StructuredBuffer<uint> _ClusterBuffer;
+RWStructuredBuffer<uint> _ArgsBuffer;
+RWStructuredBuffer<uint> _VisibilityBuffer;
+uint _ClusterCount;
+float4 _CullingPlanes[6];
+
+inline bool PlaneTest(float4 planeWorld, float3 boundsCenterLocal, float3 boundsExtentLocal, float4x4 modelTranspose)
+{
+	float4 planeLocal = mul(modelTranspose, planeWorld);
+	float3 normalAbs = abs(planeLocal.xyz);
+	float radius = dot(normalAbs, boundsExtentLocal);
+	float dist = dot(planeLocal.xyz, boundsCenterLocal) + planeLocal.w;
+	return radius + dist > 0;
+}
+
+[numthreads(KERNEL_SIZE_X, 1, 1)]
+void FrustumCullMain(uint3 id : SV_DispatchThreadID)
+{
+	if (id.x < _ClusterCount)
+	{
+		uint instanceID = _ClusterBuffer[id.x];
+		InstancePara para = _InstanceBuffer[instanceID];
+		float4x4 modelTranspose = transpose(para.model);
+		BoundingBox bounds = _BoundingBoxes[para.vertexOffset / CLUSTER_VERTEX_COUNT + id.x - para.clusterIndex];
+		[unroll]
+		for (uint i = 0; i < 6; i++)
+		{
+			if (!PlaneTest(_CullingPlanes[i], bounds.center, bounds.extent, modelTranspose))
+			{
+				return;
+			}
+		}
+		uint currentIndex = 0;
+		InterlockedAdd(_ArgsBuffer[1], 1, currentIndex);
+		_VisibilityBuffer[currentIndex] = id.x;
+	}
+}
