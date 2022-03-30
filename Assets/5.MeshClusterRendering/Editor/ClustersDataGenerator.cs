@@ -154,7 +154,9 @@ public class ClustersDataGenerator
             {
                 quadLists[mergeI].AddRange(quadLists[mergeJ]);
                 quadLists[mergeJ].Clear();
-                boundsList[mergeI].Encapsulate(boundsList[mergeJ]);
+                var bounds = boundsList[mergeI];
+                bounds.Encapsulate(boundsList[mergeJ]);
+                boundsList[mergeI] = bounds;
             }
             else
             {
