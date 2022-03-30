@@ -31,7 +31,7 @@ Shader "Unlit/Shader2.3"
             };
 
             float4 _ParentPosition;
-            int _InstanceCount;
+            uint _InstanceCount;
 
             v2f vert(appdata v)
             {

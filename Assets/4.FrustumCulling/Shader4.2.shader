@@ -38,8 +38,8 @@ Shader "Unlit/Shader4.2"
 
             v2f vert(appdata v)
             {
-                uint index = _VisibilityBuffer[v.instanceID];
-                InstancePara para = _InstanceBuffer[index];
+                uint instanceID = _VisibilityBuffer[v.instanceID];
+                InstancePara para = _InstanceBuffer[instanceID];
                 unity_ObjectToWorld = para.model;
 
                 v2f o;

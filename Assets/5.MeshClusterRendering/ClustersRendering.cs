@@ -9,7 +9,7 @@ public class ClustersRendering : MonoBehaviour
     private const int CLUSTER_VERTEX_COUNT = 64;
     private Bounds proxyBounds;
     private ComputeBuffer instanceBuffer;
-    private ComputeBuffer vboBuffer;
+    private ComputeBuffer vertexBuffer;
     void Start()
     {
         proxyBounds = new Bounds(Vector3.zero, 1000.0f * Vector3.one);
@@ -18,10 +18,10 @@ public class ClustersRendering : MonoBehaviour
     }
     private void InitClusters()
     {
-        var vbo = DClusters.Vertices;
-        vboBuffer = new ComputeBuffer(vbo.Length, 3 * sizeof(float));
-        vboBuffer.SetData(vbo);
-        DMaterial.SetBuffer("_VBO", vboBuffer);
+        var vertexData = DClusters.Vertices;
+        vertexBuffer = new ComputeBuffer(vertexData.Length, 3 * sizeof(float));
+        vertexBuffer.SetData(vertexData);
+        DMaterial.SetBuffer("_VertexBuffer", vertexBuffer);
         DMaterial.SetInteger("_ClusterCount", DClusters.Count);
     }
     private void UpdateInstance()
@@ -64,7 +64,7 @@ public class ClustersRendering : MonoBehaviour
     private void OnDisable()
     {
         instanceBuffer?.Release();
-        vboBuffer?.Release();
+        vertexBuffer?.Release();
     }
     struct InstancePara
     {

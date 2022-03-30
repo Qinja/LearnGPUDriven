@@ -17,7 +17,7 @@ public class ClustersCulling : MonoBehaviour
     private ComputeBuffer argsBuffer;
     private ComputeBuffer visibilityBuffer;
     private ComputeBuffer instanceBuffer;
-    private ComputeBuffer vboBuffer;
+    private ComputeBuffer vertexBuffer;
     private ComputeBuffer boundsBuffer;
     private Plane[] cullingPlanes = new Plane[6];
     private Vector4[] cullingPlaneVectors = new Vector4[6];
@@ -50,14 +50,14 @@ public class ClustersCulling : MonoBehaviour
     }
     private void InitClusters()
     {
-        var vbo = DClusters.Vertices;
-        vboBuffer = new ComputeBuffer(vbo.Length, 3 * sizeof(float));
-        vboBuffer.SetData(vbo);
-        DMaterial.SetBuffer("_VBO", vboBuffer);
-        DMaterial.SetInteger("_ClusterCount", DClusters.Count);
+        var vertexData = DClusters.Vertices;
+        vertexBuffer = new ComputeBuffer(vertexData.Length, 3 * sizeof(float));
+        vertexBuffer.SetData(vertexData);
+        DMaterial.SetBuffer("_VertexBuffer", vertexBuffer);
         boundsBuffer = new ComputeBuffer(DClusters.Count, 2 * 3 * sizeof(float));
         boundsBuffer.SetData(DClusters.BoundingBoxes);
         DComputeShader.SetBuffer(cullKernelID, "_BoundingBoxes", boundsBuffer);
+        DMaterial.SetInteger("_ClusterCount", DClusters.Count);
         DComputeShader.SetInt("_ClusterCount", DClusters.Count);
     }
     private void UpdateInstance()
@@ -125,7 +125,7 @@ public class ClustersCulling : MonoBehaviour
         argsBuffer?.Release();
         visibilityBuffer?.Release();
         instanceBuffer?.Release();
-        vboBuffer?.Release();
+        vertexBuffer?.Release();
         boundsBuffer?.Release();
     }
     struct InstancePara

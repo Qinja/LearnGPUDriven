@@ -12,12 +12,13 @@ Shader "Unlit/Shader5.1"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #define CLUSTER_VERTEX_COUNT 64
 
             #include "UnityCG.cginc"
 
             struct appdata
             {
-                uint vid : SV_VertexID;
+                uint vertexID : SV_VertexID;
                 uint instanceID : SV_InstanceID;
             };
 
@@ -33,19 +34,17 @@ Shader "Unlit/Shader5.1"
                 float4 color;
             };
 
-            int _ClusterCount;
-            StructuredBuffer<float3> _VBO;
+            uint _ClusterCount;
+            StructuredBuffer<float3> _VertexBuffer;
             StructuredBuffer<InstancePara> _InstanceBuffer;
 
             v2f vert(appdata v)
             {
-                int VSIZE = 64;
-                int instance_id = v.instanceID / _ClusterCount;
-                int cluster_id = v.instanceID % _ClusterCount;
-                int vertex_id = v.vid;
-                InstancePara para = _InstanceBuffer[instance_id];
-                int index = cluster_id * VSIZE + vertex_id;
-                float3 vertex = _VBO[index];
+                uint instanceID = v.instanceID / _ClusterCount;
+                uint clusterID = v.instanceID % _ClusterCount;
+                InstancePara para = _InstanceBuffer[instanceID];
+                uint index = clusterID * CLUSTER_VERTEX_COUNT + v.vertexID;
+                float3 vertex = _VertexBuffer[index];
 
                 v2f o;
                 unity_ObjectToWorld = para.model;

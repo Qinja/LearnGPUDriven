@@ -8,9 +8,9 @@ public class ProcedualDraw : MonoBehaviour
 
     private Matrix4x4[] models;
     private ComputeBuffer instanceBuffer;
-    private ComputeBuffer vboBuffer;
-    private ComputeBuffer iboBuffer;
-    private const uint VSIZE = 2496;
+    private ComputeBuffer vertexBuffer;
+    private ComputeBuffer indexBuffer;
+    private const uint MESH_VERTEX_COUNT = 2496;
     private Bounds proxyBounds;
     private void Start()
     {
@@ -20,42 +20,42 @@ public class ProcedualDraw : MonoBehaviour
     }
     private void InitMergeMesh()
     {
-        var iboA = DMeshA.triangles;
-        var iboB = DMeshB.triangles;
-        var vboA = DMeshA.vertices;
-        var vboB = DMeshB.vertices;
-        var ibo = new int[VSIZE * 2];
-        for (int i = 0; i < iboA.Length; i++)
+        var indexDataA = DMeshA.triangles;
+        var indexDataB = DMeshB.triangles;
+        var vertexDataA = DMeshA.vertices;
+        var vertexDataB = DMeshB.vertices;
+        var mergeIndexData = new int[MESH_VERTEX_COUNT * 2];
+        for (int i = 0; i < indexDataA.Length; i++)
         {
-            ibo[i] = iboA[i];
+            mergeIndexData[i] = indexDataA[i];
         }
-        for (int i = iboA.Length; i < VSIZE; i++)
+        for (int i = indexDataA.Length; i < MESH_VERTEX_COUNT; i++)
         {
-            ibo[i] = iboA[iboA.Length - 1];
+            mergeIndexData[i] = indexDataA[indexDataA.Length - 1];
         }
-        for (int i = 0; i < iboB.Length; i++)
+        for (int i = 0; i < indexDataB.Length; i++)
         {
-            ibo[VSIZE + i] = iboB[i] + vboA.Length;
+            mergeIndexData[MESH_VERTEX_COUNT + i] = indexDataB[i] + vertexDataA.Length;
         }
-        for (int i = (int)VSIZE + iboB.Length; i < 2 * VSIZE; i++)
+        for (int i = (int)MESH_VERTEX_COUNT + indexDataB.Length; i < 2 * MESH_VERTEX_COUNT; i++)
         {
-            ibo[i] = iboB[iboB.Length - 1] + vboA.Length;
+            mergeIndexData[i] = indexDataB[indexDataB.Length - 1] + vertexDataA.Length;
         }
-        var vbo = new Vector3[vboA.Length + vboB.Length];
-        for (int i = 0; i < vboA.Length; i++)
+        var mergeVertexData = new Vector3[vertexDataA.Length + vertexDataB.Length];
+        for (int i = 0; i < vertexDataA.Length; i++)
         {
-            vbo[i] = vboA[i];
+            mergeVertexData[i] = vertexDataA[i];
         }
-        for (var i = 0; i < vboB.Length; i++)
+        for (var i = 0; i < vertexDataB.Length; i++)
         {
-            vbo[i + vboA.Length] = vboB[i];
+            mergeVertexData[i + vertexDataA.Length] = vertexDataB[i];
         }
-        vboBuffer = new ComputeBuffer(vbo.Length, 3 * sizeof(float));
-        iboBuffer = new ComputeBuffer(ibo.Length, sizeof(int));
-        vboBuffer.SetData(vbo);
-        iboBuffer.SetData(ibo);
-        DMaterial.SetBuffer("_VBO", vboBuffer);
-        DMaterial.SetBuffer("_IBO", iboBuffer);
+        vertexBuffer = new ComputeBuffer(mergeVertexData.Length, 3 * sizeof(float));
+        indexBuffer = new ComputeBuffer(mergeIndexData.Length, sizeof(int));
+        vertexBuffer.SetData(mergeVertexData);
+        indexBuffer.SetData(mergeIndexData);
+        DMaterial.SetBuffer("_VertexBuffer", vertexBuffer);
+        DMaterial.SetBuffer("_IndexBuffer", indexBuffer);
     }
     private void UpdateInstance()
     {
@@ -75,7 +75,7 @@ public class ProcedualDraw : MonoBehaviour
         var instanceParas = new InstancePara[125 * 2];
         for (int i = 0; i < 125 * 2; i++)
         {
-            instanceParas[i].index_offset = i < 125 ? 0 : VSIZE;
+            instanceParas[i].indexOffset = i < 125 ? 0 : MESH_VERTEX_COUNT;
             instanceParas[i].model = models[i];
             instanceParas[i].color = new Vector4(i < 125 ? Random.value : Random.Range(0.1f, 0.3f), Random.value, Random.Range(0.7f, 1.0f), 1);
         }
@@ -92,17 +92,17 @@ public class ProcedualDraw : MonoBehaviour
         {
             UpdateInstance();
         }
-        Graphics.DrawProcedural(DMaterial, proxyBounds, MeshTopology.Triangles, (int)VSIZE, 125 * 2);
+        Graphics.DrawProcedural(DMaterial, proxyBounds, MeshTopology.Triangles, (int)MESH_VERTEX_COUNT, 125 * 2);
     }
     private void OnDisable()
     {
         instanceBuffer?.Release();
-        vboBuffer?.Release();
-        iboBuffer?.Release();
+        vertexBuffer?.Release();
+        indexBuffer?.Release();
     }
     struct InstancePara
     {
-        public uint index_offset;
+        public uint indexOffset;
         public Matrix4x4 model;
         public Vector4 color;
         public const int SIZE = sizeof(uint) + 16 * sizeof(float) + 4 * sizeof(float);

@@ -14,12 +14,13 @@ Shader "Unlit/Shader3.3"
             #pragma fragment frag
             #pragma shader_feature INSTANCING_ON
             #define UNITY_INSTANCING_ENABLED
+            #define MESH_VERTEX_COUNT 2496
 
             #include "UnityCG.cginc"
 
             struct appdata
             {
-                uint vid : SV_VertexID;
+                uint vertexID : SV_VertexID;
                 uint instanceID : SV_InstanceID;
             };
 
@@ -31,26 +32,23 @@ Shader "Unlit/Shader3.3"
 
             struct InstancePara
             {
-                uint index_offset;
+                uint indexOffset;
                 float4 color;
             };
 
-            StructuredBuffer<float3> _VBO;
-            StructuredBuffer<uint> _IBO;
+            StructuredBuffer<float3> _VertexBuffer;
+            StructuredBuffer<uint> _IndexBuffer;
             StructuredBuffer<InstancePara> _InstanceBuffer;
 
             v2f vert(appdata v)
             {
-                int VSIZE = 2496;
-                int cid = v.instanceID;
-                int vid = v.vid % VSIZE;
-                InstancePara para = _InstanceBuffer[cid];
-                int index_offset = para.index_offset;
-                int index = _IBO[index_offset + vid];
-                float3 vertex = _VBO[index];
+                uint vertexID = v.vertexID % MESH_VERTEX_COUNT;
+                InstancePara para = _InstanceBuffer[v.instanceID];
+                uint index = _IndexBuffer[para.indexOffset + vertexID];
+                float3 vertex = _VertexBuffer[index];
 
                 v2f o;                
-                unity_ObjectToWorld = unity_Builtins0Array[cid].unity_ObjectToWorldArray;
+                unity_ObjectToWorld = unity_Builtins0Array[v.instanceID].unity_ObjectToWorldArray;
                 o.vertex = UnityObjectToClipPos(vertex);
                 o.color = para.color;
                 return o;
