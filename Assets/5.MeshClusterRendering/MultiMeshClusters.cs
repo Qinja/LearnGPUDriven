@@ -87,7 +87,7 @@ public class MultiMeshClusters : MonoBehaviour
                 for (int k = 0; k < row && n < Count; k++, n++)
                 {
                     var meshId = Random.Range(0, DClusters.Count);
-                    var meshPosition = parentPosition + (20.0f + 2.0f * row) * (meshId - 0.5f * DClusters.Count) * Vector3.right;
+                    var meshPosition = parentPosition + (20.0f + 2.0f * row) * (meshId - 0.5f * DClusters.Count) * Vector3.right + 10.0f * Vector3.right;
                     var meshColorBMin = 1.0f * meshId / DClusters.Count;
                     var meshColorBMax = 1.0f * (meshId + 1) / DClusters.Count;
                     var count = DClusters[meshId].Count;
