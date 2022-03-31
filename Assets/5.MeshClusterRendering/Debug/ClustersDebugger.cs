@@ -12,13 +12,13 @@ namespace MeshClusterRendering
 		public float ShowIndex = 0.0f;
 		void Start()
 		{
-			meshes = new Mesh[DCluster.Count];
+			meshes = new Mesh[DCluster.ClusterCount];
 			var ibo = new int[DCluster.QuadsPerCluster * 4];
 			for(int i = 0; i < DCluster.QuadsPerCluster * 4; i++)
 			{
 				ibo[i] = i;
 			}
-			for (int i = 0; i < DCluster.Count; i++)
+			for (int i = 0; i < DCluster.ClusterCount; i++)
 			{
 				meshes[i] = new Mesh();
 				meshes[i].name = DCluster.name;
@@ -40,14 +40,14 @@ namespace MeshClusterRendering
 		{
 			if(ShowAll)
 			{
-				for(int i = 0; i < DCluster.Count; i++)
+				for(int i = 0; i < DCluster.ClusterCount; i++)
 				{
 					Graphics.DrawMesh(meshes[i], transform.localToWorldMatrix, DMaterial, 0);
 				}
 			}
 			else
 			{
-				int i = (int)(ShowIndex * (DCluster.Count - 1));
+				int i = (int)(ShowIndex * (DCluster.ClusterCount - 1));
 				Graphics.DrawMesh(meshes[i], transform.localToWorldMatrix, DMaterial, 0);
 			}
 		}
@@ -59,14 +59,14 @@ namespace MeshClusterRendering
 			{
 				if (ShowAll)
 				{
-					for (int i = 0; i < DCluster.Count; i++)
+					for (int i = 0; i < DCluster.ClusterCount; i++)
 					{
 						Gizmos.DrawWireCube(DCluster.BoundingBoxes[i].center, DCluster.BoundingBoxes[i].size);
 					}
 				}
 				else
 				{
-					int i = (int)(ShowIndex * (DCluster.Count - 1));
+					int i = (int)(ShowIndex * (DCluster.ClusterCount - 1));
 					Gizmos.DrawWireCube(DCluster.BoundingBoxes[i].center, DCluster.BoundingBoxes[i].size);
 				}
 			}

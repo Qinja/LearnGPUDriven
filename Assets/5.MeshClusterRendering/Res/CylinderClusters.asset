@@ -15,7 +15,7 @@ MonoBehaviour:
   RawMesh: {fileID: 4300000, guid: 47bf7cca35104584497d9ca8195c5aaf, type: 2}
   Name: CylinderMesh_Clusters
   QuadsPerCluster: 16
-  Count: 4
+  ClusterCount: 4
   Vertices:
   - {x: -0.47552857, y: -1, z: -0.15450859}
   - {x: -0.47552857, y: 1, z: -0.15450859}

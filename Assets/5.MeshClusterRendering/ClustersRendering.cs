@@ -24,7 +24,7 @@ namespace MeshClusterRendering
 			vertexBuffer = new ComputeBuffer(vertexData.Length, 3 * sizeof(float));
 			vertexBuffer.SetData(vertexData);
 			DMaterial.SetBuffer("_VertexBuffer", vertexBuffer);
-			DMaterial.SetInteger("_ClusterCount", DClusters.Count);
+			DMaterial.SetInteger("_ClusterCount", DClusters.ClusterCount);
 		}
 		private void UpdateInstance()
 		{
@@ -61,7 +61,7 @@ namespace MeshClusterRendering
 				Count = Count - Mathf.Max(Count / 10, 1);
 				UpdateInstance();
 			}
-			Graphics.DrawProcedural(DMaterial, proxyBounds, MeshTopology.Quads, CLUSTER_VERTEX_COUNT, Count * DClusters.Count);
+			Graphics.DrawProcedural(DMaterial, proxyBounds, MeshTopology.Quads, CLUSTER_VERTEX_COUNT, Count * DClusters.ClusterCount);
 		}
 		private void OnDisable()
 		{

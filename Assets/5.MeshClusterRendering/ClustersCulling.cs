@@ -29,7 +29,7 @@ namespace MeshClusterRendering
 			argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
 			cullKernelID = DComputeShader.FindKernel("FrustumCullMain");
 			DComputeShader.SetBuffer(cullKernelID, "_ArgsBuffer", argsBuffer);
-			DComputeShader.SetInt("_ClusterCount", DClusters.Count);
+			DComputeShader.SetInt("_ClusterCount", DClusters.ClusterCount);
 			InitClusters();
 			InitIndexBuffer();
 			UpdateInstance();
@@ -56,11 +56,11 @@ namespace MeshClusterRendering
 			vertexBuffer = new ComputeBuffer(vertexData.Length, 3 * sizeof(float));
 			vertexBuffer.SetData(vertexData);
 			DMaterial.SetBuffer("_VertexBuffer", vertexBuffer);
-			boundsBuffer = new ComputeBuffer(DClusters.Count, 2 * 3 * sizeof(float));
+			boundsBuffer = new ComputeBuffer(DClusters.ClusterCount, 2 * 3 * sizeof(float));
 			boundsBuffer.SetData(DClusters.BoundingBoxes);
 			DComputeShader.SetBuffer(cullKernelID, "_BoundingBoxes", boundsBuffer);
-			DMaterial.SetInteger("_ClusterCount", DClusters.Count);
-			DComputeShader.SetInt("_ClusterCount", DClusters.Count);
+			DMaterial.SetInteger("_ClusterCount", DClusters.ClusterCount);
+			DComputeShader.SetInt("_ClusterCount", DClusters.ClusterCount);
 		}
 		private void UpdateInstance()
 		{
@@ -84,8 +84,8 @@ namespace MeshClusterRendering
 			instanceBuffer = new ComputeBuffer(Count, InstancePara.SIZE);
 			instanceBuffer.SetData(instanceParas);
 			visibilityBuffer?.Release();
-			visibilityBuffer = new ComputeBuffer(Count * DClusters.Count, sizeof(uint));
-			visibilityBuffer.SetData(new uint[Count * DClusters.Count]);
+			visibilityBuffer = new ComputeBuffer(Count * DClusters.ClusterCount, sizeof(uint));
+			visibilityBuffer.SetData(new uint[Count * DClusters.ClusterCount]);
 
 			DComputeShader.SetBuffer(cullKernelID, "_InstanceBuffer", instanceBuffer);
 			DComputeShader.SetBuffer(cullKernelID, "_VisibilityBuffer", visibilityBuffer);

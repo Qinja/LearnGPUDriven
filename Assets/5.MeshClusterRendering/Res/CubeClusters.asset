@@ -15,7 +15,7 @@ MonoBehaviour:
   RawMesh: {fileID: 4300000, guid: 10208266513e6634782a5b3a8885eeca, type: 2}
   Name: CubeMesh_Clusters
   QuadsPerCluster: 16
-  Count: 1
+  ClusterCount: 1
   Vertices:
   - {x: 0.5, y: -0.5, z: 0.5}
   - {x: 0.5, y: 0.5, z: 0.5}

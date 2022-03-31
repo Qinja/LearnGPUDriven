@@ -105,7 +105,7 @@ namespace MeshClusterRendering
 			return vtsQuad;
 		}
 
-		const int QUAD_COUNT = 16;
+		const int QUAD_PER_CLUSTER = 16;
 		struct Quad
 		{
 			public Vector3 vt1;
@@ -115,9 +115,10 @@ namespace MeshClusterRendering
 		}
 		static ClustersData QuadsToClusters(List<Vector3> inQuads)
 		{
-			var quadLists = new List<List<Quad>>();
-			var boundsList = new List<Bounds>();
-			for (int i = 0; i < inQuads.Count / 4; i++)
+			var quadCount = inQuads.Count / 4;
+			var quadLists = new List<List<Quad>>(quadCount);
+			var boundsList = new List<Bounds>(quadCount);
+			for (int i = 0; i < quadCount; i++)
 			{
 				var quadList = new List<Quad>()
 				{
@@ -135,13 +136,13 @@ namespace MeshClusterRendering
 				float minVolume = float.MaxValue;
 				int mergeI = -1;
 				int mergeJ = -1;
-				for (int i = 0; i < quadLists.Count; i++)
+				for (int i = 0; i < quadCount; i++)
 				{
-					if (quadLists[i].Count >= QUAD_COUNT || quadLists[i].Count == 0) continue;
-					for (int j = i + 1; j < quadLists.Count; j++)
+					if (quadLists[i].Count >= QUAD_PER_CLUSTER || quadLists[i].Count == 0) continue;
+					for (int j = i + 1; j < quadCount; j++)
 					{
-						if (quadLists[j].Count >= QUAD_COUNT || quadLists[j].Count == 0) continue;
-						if (quadLists[j].Count + quadLists[i].Count >= QUAD_COUNT) continue;
+						if (quadLists[j].Count >= QUAD_PER_CLUSTER || quadLists[j].Count == 0) continue;
+						if (quadLists[j].Count + quadLists[i].Count >= QUAD_PER_CLUSTER) continue;
 						var bounds = boundsList[i];
 						bounds.Encapsulate(boundsList[j]);
 						if (bounds.extents.sqrMagnitude < minVolume)
@@ -166,46 +167,37 @@ namespace MeshClusterRendering
 				}
 			}
 			quadLists.RemoveAll(list => list.Count == 0);
-			quadLists.ForEach(list =>
-			{
-				var add = QUAD_COUNT - list.Count;
-				var lastVertex = list[list.Count - 1].vt4;
-				for (int j = 0; j < add; j++)
-				{
-					list.Add(new Quad()
-					{
-						vt1 = lastVertex,
-						vt2 = lastVertex,
-						vt3 = lastVertex,
-						vt4 = lastVertex
-					});
-				}
-			});
-			var clusters = new Vector3[quadLists.Count * QUAD_COUNT * 4];
+			var clusters = new Vector3[quadLists.Count * QUAD_PER_CLUSTER * 4];
 			var boxes = new Bounds[quadLists.Count];
 			for (int i = 0, n = 0; i < quadLists.Count; i++)
 			{
-				boxes[i] = new Bounds(quadLists[i][0].vt1, Vector3.zero);
-				foreach (var quadList in quadLists[i])
+				var list = quadLists[i];
+				boxes[i] = new Bounds(list[0].vt1, Vector3.zero);
+				foreach (var quad in list)
 				{
-					clusters[n++] = quadList.vt1;
-					clusters[n++] = quadList.vt2;
-					clusters[n++] = quadList.vt3;
-					clusters[n++] = quadList.vt4;
-					if(quadList.vt1 != quadList.vt2 && quadList.vt1 != quadList.vt3 && quadList.vt1 != quadList.vt4)
-					{
-						boxes[i].Encapsulate(quadList.vt1);
-						boxes[i].Encapsulate(quadList.vt2);
-						boxes[i].Encapsulate(quadList.vt3);
-						boxes[i].Encapsulate(quadList.vt4);
-					}
+					clusters[n++] = quad.vt1;
+					clusters[n++] = quad.vt2;
+					clusters[n++] = quad.vt3;
+					clusters[n++] = quad.vt4;
+					boxes[i].Encapsulate(quad.vt1);
+					boxes[i].Encapsulate(quad.vt2);
+					boxes[i].Encapsulate(quad.vt3);
+					boxes[i].Encapsulate(quad.vt4);
+				}
+				var lastVertex = list[list.Count - 1].vt4;
+				for (int j = 0; j < QUAD_PER_CLUSTER - list.Count; j++)
+				{
+					clusters[n++] = lastVertex;
+					clusters[n++] = lastVertex;
+					clusters[n++] = lastVertex;
+					clusters[n++] = lastVertex;
 				}
 			}
 			ClustersData outData = ScriptableObject.CreateInstance<ClustersData>();
 			outData.Vertices = clusters;
-			outData.QuadsPerCluster = QUAD_COUNT;
+			outData.QuadsPerCluster = QUAD_PER_CLUSTER;
 			outData.BoundingBoxes = boxes;
-			outData.Count = quadLists.Count;
+			outData.ClusterCount = quadLists.Count;
 			return outData;
 		}
 	}

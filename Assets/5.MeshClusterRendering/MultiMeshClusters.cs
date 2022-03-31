@@ -91,7 +91,7 @@ namespace MeshClusterRendering
 						var meshPosition = parentPosition + (20.0f + 2.0f * row) * (meshId - 0.5f * DClusters.Count) * Vector3.right + 10.0f * Vector3.right;
 						var meshColorBMin = 1.0f * meshId / DClusters.Count;
 						var meshColorBMax = 1.0f * (meshId + 1) / DClusters.Count;
-						var count = DClusters[meshId].Count;
+						var count = DClusters[meshId].ClusterCount;
 						instanceParas[n].model = Matrix4x4.TRS(meshPosition + 2.0f * new Vector3(i, j, k), Random.rotationUniform, Vector3.one * Random.Range(0.5f, 1.0f));
 						instanceParas[n].color = new Vector3(Random.Range(0.2f, 0.8f), Random.Range(0.5f, 1.0f), Random.Range(meshColorBMin, meshColorBMax));
 						instanceParas[n].vertexOffset = vertexOffset[meshId];
