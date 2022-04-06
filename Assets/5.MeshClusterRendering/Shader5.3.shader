@@ -9,6 +9,7 @@ Shader "Unlit/Shader5.3"
 
         Pass
         {
+            Cull Off
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -56,9 +57,9 @@ Shader "Unlit/Shader5.3"
                 return o;
             }
 
-            fixed4 frag(v2f i) : SV_Target
+            fixed4 frag(v2f i, bool facing : SV_IsFrontFace) : SV_Target
             {
-                fixed4 col = fixed4(i.color,1);
+                fixed4 col = facing ? fixed4(i.color,1) : fixed4(1,1,0,1);
                 return col;
             }
             ENDCG
