@@ -6,10 +6,10 @@ namespace MeshClusterRendering
 	{
 		public ClustersData DCluster;
 		public Material DMaterial;
-		private Mesh[] meshes;
 		public bool ShowAll = true;
 		[Range(0.0f, 1.0f)]
 		public float ShowIndex = 0.0f;
+		private Mesh[] meshes;
 		void Start()
 		{
 			meshes = new Mesh[DCluster.ClusterCount];
@@ -53,10 +53,10 @@ namespace MeshClusterRendering
 		}
 		private void OnDrawGizmos()
 		{
-			Gizmos.matrix = transform.localToWorldMatrix;
-			Gizmos.color = Color.green;
 			if (Application.isPlaying)
 			{
+				Gizmos.matrix = transform.localToWorldMatrix;
+				Gizmos.color = Color.green;
 				if (ShowAll)
 				{
 					for (int i = 0; i < DCluster.ClusterCount; i++)

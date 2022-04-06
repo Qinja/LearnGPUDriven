@@ -168,7 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DCluster: {fileID: 11400000, guid: ad620528eb923b647acdc2e9b4f13ee3, type: 2}
-  DMaterial: {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  DMaterial: {fileID: 2100000, guid: 19fc49eba09685943a3edf1c85ab6568, type: 2}
   ShowAll: 1
   ShowIndex: 0
 --- !u!1 &641089880
