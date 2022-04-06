@@ -6,7 +6,7 @@ namespace MeshClusterRendering
 {
 	public class ClustersDataGenerator
 	{
-		[MenuItem("Tools/SaveSelectionMesh")]
+		[MenuItem("Tools/5.SaveSelectionMesh")]
 		static void SaveSelectionMesh()
 		{
 			var gameObj = Selection.activeGameObject;
@@ -21,7 +21,7 @@ namespace MeshClusterRendering
 				}
 			}
 		}
-		[MenuItem("Tools/SplitSelectionMesh")]
+		[MenuItem("Tools/5.SplitSelectionMesh")]
 		static void SplitSelectionMesh()
 		{
 			var mesh = Selection.activeObject as Mesh;
