@@ -2,6 +2,7 @@ Shader "Unlit/Shader5.3"
 {
     Properties
     {
+        _BackFaceColor("Back Face Color", Color) = (0,0,0,1)
     }
     SubShader
     {
@@ -41,6 +42,7 @@ Shader "Unlit/Shader5.3"
             StructuredBuffer<uint> _VisibilityBuffer;
             StructuredBuffer<InstancePara> _InstanceBuffer;
             StructuredBuffer<uint> _ClusterBuffer;
+            float4 _BackFaceColor;
 
             v2f vert(appdata v)
             {
@@ -59,7 +61,7 @@ Shader "Unlit/Shader5.3"
 
             fixed4 frag(v2f i, bool facing : SV_IsFrontFace) : SV_Target
             {
-                fixed4 col = facing ? fixed4(i.color,1) : fixed4(1,1,0,1);
+                fixed4 col = facing ? fixed4(i.color,1) : _BackFaceColor;
                 return col;
             }
             ENDCG
