@@ -6,7 +6,7 @@ namespace MeshClusterRendering
 {
 	public class ClustersDataGenerator
 	{
-		[MenuItem("Tools/5.SaveSelectionMesh")]
+		[MenuItem("Tools/5.SaveSelectionMesh", false, 5)]
 		static void SaveSelectionMesh()
 		{
 			var gameObj = Selection.activeGameObject;
@@ -21,7 +21,7 @@ namespace MeshClusterRendering
 				}
 			}
 		}
-		[MenuItem("Tools/5.SplitSelectionMesh")]
+		[MenuItem("Tools/5.SplitSelectionMesh", false, 5)]
 		static void SplitSelectionMesh()
 		{
 			var mesh = Selection.activeObject as Mesh;
@@ -34,7 +34,22 @@ namespace MeshClusterRendering
 				var path = EditorUtility.SaveFilePanelInProject("Save Clusters Asset", "Clusters.asset", "asset", "Please enter a file name to save the clusters data to");
 				if (!string.IsNullOrEmpty(path))
 				{
-					AssetDatabase.CreateAsset(clusters, path);
+					var oldData = AssetDatabase.LoadAssetAtPath<ClustersData>(path);
+					if (oldData != null)
+					{
+						oldData.RawMesh = clusters.RawMesh;
+						oldData.Name = clusters.Name;
+						oldData.QuadsPerCluster = clusters.QuadsPerCluster;
+						oldData.ClusterCount = clusters.ClusterCount;
+						oldData.Vertices = clusters.Vertices;
+						oldData.BoundingBoxes = clusters.BoundingBoxes;
+						EditorUtility.SetDirty(oldData);
+						AssetDatabase.SaveAssets();
+					}
+					else
+					{
+						AssetDatabase.CreateAsset(clusters, path);
+					}
 				}
 			}
 		}
