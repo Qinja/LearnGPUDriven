@@ -1,0 +1,83 @@
+#pragma kernel ClusterCullMain
+#define KERNEL_SIZE_X 64
+#define CLUSTER_VERTEX_COUNT 64
+
+struct InstancePara
+{
+	float4x4 model;
+	float4 padding_for_other_para;
+	uint vertexOffset;
+	uint clusterIndex;
+};
+struct BoundingSphere
+{
+	float3 center;
+	float radius;
+};
+struct BoundingCone
+{
+	float3 normal;
+	float cosAngle;
+	float sinAngle;
+};
+struct ClusterBoundsData
+{
+	BoundingSphere boundingSphere;
+	BoundingCone boundingCone;
+};
+StructuredBuffer<ClusterBoundsData> _ClusterBounds;
+StructuredBuffer<InstancePara> _InstanceBuffer;
+StructuredBuffer<uint> _ClusterBuffer;
+RWStructuredBuffer<uint> _ArgsBuffer;
+RWStructuredBuffer<uint> _VisibilityBuffer;
+uint _ClusterCount;
+float4 _CullingPlanes[6];
+float3 _CameraPosition;
+
+inline bool PlaneTest(float4 planeWorld, BoundingSphere boundsLocal, float4x4 modelTranspose)
+{
+	float4 planeLocal = mul(modelTranspose, planeWorld);
+	float distance = dot(planeLocal.xyz, boundsLocal.center) + planeLocal.w;
+	return distance > -boundsLocal.radius;
+}
+
+inline bool BackFaceTest(ClusterBoundsData boundingData, float4x4 model)
+{
+	float3 worldNormal = normalize(mul((float3x3)model, boundingData.boundingCone.normal));
+	float3 worldCenter = mul(model, float4(boundingData.boundingSphere.center, 1)).xyz;
+	float d = dot(worldNormal, normalize(_CameraPosition - worldCenter));
+	float sinA = boundingData.boundingCone.sinAngle;
+	//return d > -sinA;										//19.2
+	float cosA = boundingData.boundingCone.cosAngle;		//sqrt(1 - sinA * sinA);
+	float sinB = boundingData.boundingSphere.radius / length(_CameraPosition - worldCenter);
+	float cosB = sqrt(1 - sinB * sinB);
+	float sinAB = sinA * cosB + cosA * sinB;
+	return d > -sinAB;										//19.3
+}
+	
+[numthreads(KERNEL_SIZE_X, 1, 1)]
+void ClusterCullMain(uint3 id : SV_DispatchThreadID)
+{
+	if (id.x < _ClusterCount)
+	{
+		uint instanceID = _ClusterBuffer[id.x];
+		InstancePara para = _InstanceBuffer[instanceID];
+		float4x4 modelTranspose = transpose(para.model);
+		ClusterBoundsData boundsData = _ClusterBounds[para.vertexOffset / CLUSTER_VERTEX_COUNT + id.x - para.clusterIndex];
+		if (!BackFaceTest(boundsData, para.model))
+		{
+			return;
+		}
+		[unroll]
+		for (uint i = 0; i < 6; i++)
+		{
+			if (!PlaneTest(_CullingPlanes[i], boundsData.boundingSphere, modelTranspose))
+			{
+				return;
+			}
+		}
+		uint currentIndex = 0;
+		InterlockedAdd(_ArgsBuffer[1], 1, currentIndex);
+		_VisibilityBuffer[currentIndex] = id.x;
+	}
+}
