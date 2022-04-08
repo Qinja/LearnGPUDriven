@@ -97,7 +97,10 @@ namespace MeshClusterRendering
 						instanceParas[n].vertexOffset = vertexOffset[meshId];
 						instanceParas[n].clusterOffset = (uint)clusterCount;
 						clusterCount += count;
-						for (int l = 0; l < count; l++) clusterData.Add(n);
+						for (int l = 0; l < count; l++)
+						{
+							clusterData.Add(n);
+						}
 					}
 				}
 			}
@@ -121,7 +124,7 @@ namespace MeshClusterRendering
 			DMaterial.SetBuffer("_ClusterBuffer", clustersBuffer);
 			kernelGroupX = Mathf.CeilToInt(1.0f * clusterCount / KERNEL_SIZE_X);
 		}
-		private void UpdateCullingPlane()
+		private void UpdateCameraParameters()
 		{
 			GeometryUtility.CalculateFrustumPlanes(DCamera, cullingPlanes);
 			for (int i = 0; i < 6; i++)
@@ -143,7 +146,7 @@ namespace MeshClusterRendering
 				Count = Count - Mathf.Max(Count / 10, 1);
 				UpdateInstance();
 			}
-			UpdateCullingPlane();
+			UpdateCameraParameters();
 			argsBuffer.SetData(new uint[5] { (uint)indexBuffer.count, 0, 0, 0, 0 });
 			DComputeShader.Dispatch(cullKernelID, kernelGroupX, 1, 1);
 			Graphics.DrawProceduralIndirect(DMaterial, proxyBounds, MeshTopology.Triangles, indexBuffer, argsBuffer);
