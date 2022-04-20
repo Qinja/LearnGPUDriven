@@ -25,17 +25,17 @@ namespace IndirectDraw
 		}
 		void Update()
 		{
-			if(Input.GetKey(KeyCode.UpArrow))
+			if (Input.GetKey(KeyCode.UpArrow))
 			{
 				Count++;
 				UpdateInstance();
 			}
-			else if(Input.GetKey(KeyCode.DownArrow))
+			else if (Input.GetKey(KeyCode.DownArrow))
 			{
 				Count--;
 				UpdateInstance();
 			}
-			Graphics.DrawMeshInstancedIndirect(DMesh, 0, DMaterial,proxyBounds, argsBuffer);
+			Graphics.DrawMeshInstancedIndirect(DMesh, 0, DMaterial, proxyBounds, argsBuffer);
 		}
 		private void OnDisable()
 		{
