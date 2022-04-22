@@ -7,7 +7,7 @@ Shader "Unlit/Shader7.1.preZ"
     {
         Tags
         {
-            "Queue" = "Transparent"
+            "Queue" = "AlphaTest-2"
         }
         Pass
         {

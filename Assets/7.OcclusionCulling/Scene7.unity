@@ -410,7 +410,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   DCamera: {fileID: 963194227}
-  DMaterial: {fileID: 2100000, guid: 37bc59882d8dcbe4185089d6ad0d827f, type: 2}
+  DMaterial: {fileID: 2100000, guid: e942b3067ce17604e9dd840eccc402d7, type: 2}
   DOcclusionMaterial: {fileID: 2100000, guid: 4baf1299176f5ca4b93ff051bd72fe96, type: 2}
   Count: 100
 --- !u!1 &1471294811
