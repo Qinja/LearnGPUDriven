@@ -13,8 +13,8 @@ namespace OcclusionCulling
 		private uint indexCount;
 		private Bounds proxyBounds;
 		private ComputeBuffer argsBuffer;
-		private ComputeBuffer visibilityIndexBuffer;
-		private ComputeBuffer visibilitySignBuffer;
+		private ComputeBuffer visibilityBuffer;
+		private ComputeBuffer visibilityFrameIndexBuffer;
 		private ComputeBuffer instanceBuffer;
 		private GraphicsBuffer occlusionCubeIndexBuffer;
 		private int frameIndex;
@@ -52,7 +52,7 @@ namespace OcclusionCulling
 				{
 					for (int k = 0; k < row && n < Count; k++, n++)
 					{
-						instanceParas[n].model = Matrix4x4.TRS(parentPosition + 2.0f * new Vector3(i, j, k), Quaternion.identity, Vector3.one * Random.Range(0.5f, 1.0f));
+						instanceParas[n].model = Matrix4x4.TRS(parentPosition + 2.0f * new Vector3(i, j, k), Random.rotationUniform, Vector3.one * Random.Range(0.5f, 1.0f));
 						instanceParas[n].color = new Vector4(Random.Range(0.7f, 1.0f), Random.Range(0.1f, 0.6f), Random.value, 1);
 					}
 				}
@@ -60,20 +60,20 @@ namespace OcclusionCulling
 			instanceBuffer?.Release();
 			instanceBuffer = new ComputeBuffer(Count, InstancePara.SIZE);
 			instanceBuffer.SetData(instanceParas);
-			visibilityIndexBuffer?.Release();
-			visibilityIndexBuffer = new ComputeBuffer(Count, sizeof(uint));
-			visibilitySignBuffer?.Release();
-			visibilitySignBuffer = new ComputeBuffer(Count, sizeof(uint));
-			visibilitySignBuffer.SetData(new uint[Count]);
-			Graphics.SetRandomWriteTarget(1, visibilitySignBuffer);
+			visibilityBuffer?.Release();
+			visibilityBuffer = new ComputeBuffer(Count, sizeof(uint));
+			visibilityFrameIndexBuffer?.Release();
+			visibilityFrameIndexBuffer = new ComputeBuffer(Count, sizeof(uint));
+			visibilityFrameIndexBuffer.SetData(new uint[Count]);
+			Graphics.SetRandomWriteTarget(1, visibilityFrameIndexBuffer);
 
 			frameIndex = Mathf.Max(frameIndex, Count);
 			visibilities = new uint[Count];
 			occlusionVaild = false;
 			DOcclusionMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
-			DOcclusionMaterial.SetBuffer("_VisibilityFrameBuffer", visibilitySignBuffer);
+			DOcclusionMaterial.SetBuffer("_VisibilityFrameIndexBuffer", visibilityFrameIndexBuffer);
 			DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
-			DMaterial.SetBuffer("_VisibilityBuffer", visibilityIndexBuffer);
+			DMaterial.SetBuffer("_VisibilityBuffer", visibilityBuffer);
 		}
 		void Update()
 		{
@@ -88,11 +88,11 @@ namespace OcclusionCulling
 				UpdateInstance();
 			}
 
+			//prev frame
 			uint visibleCount = 0;
 			if (occlusionVaild)
 			{
-				//prev frame
-				visibilitySignBuffer.GetData(visibilities);
+				visibilityFrameIndexBuffer.GetData(visibilities);
 				for (uint i = 0; i < Count; i++)
 				{
 					if (visibilities[i] == frameIndex - 1)
@@ -113,16 +113,16 @@ namespace OcclusionCulling
 			//current frame
 			DOcclusionMaterial.SetInt("_CurrentFrameIndex", frameIndex);
 			Graphics.DrawProcedural(DOcclusionMaterial, proxyBounds, MeshTopology.Triangles, occlusionCubeIndexBuffer, 36, Count, DCamera);
-			visibilityIndexBuffer.SetData(visibilities);
+			visibilityBuffer.SetData(visibilities);
 			argsBuffer.SetData(new uint[5] { indexCount, visibleCount, 0, 0, 0 });
 			Graphics.DrawMeshInstancedIndirect(DMesh, 0, DMaterial, proxyBounds, argsBuffer);
 			frameIndex++;
 		}
 		private void OnDisable()
 		{
-			visibilityIndexBuffer?.Release();
+			visibilityBuffer?.Release();
 			instanceBuffer?.Release();
-			visibilitySignBuffer?.Release();
+			visibilityFrameIndexBuffer?.Release();
 			argsBuffer?.Release();
 			occlusionCubeIndexBuffer?.Release();
 		}

@@ -38,7 +38,7 @@ Shader "Unlit/Shader7.1.preZ"
                 float4 color;
             };
 
-            RWStructuredBuffer<uint> _VisibilityFrameBuffer : register(u1);
+            RWStructuredBuffer<uint> _VisibilityFrameIndexBuffer : register(u1);
             StructuredBuffer<InstancePara> _InstanceBuffer;
             float3 _BoundsExtent;
             float3 _BoundsCenter;
@@ -70,7 +70,7 @@ Shader "Unlit/Shader7.1.preZ"
             [earlydepthstencil]
             fixed4 frag(v2f i) : SV_Target
             {
-                _VisibilityFrameBuffer[i.instanceID] = _CurrentFrameIndex;
+                _VisibilityFrameIndexBuffer[i.instanceID] = _CurrentFrameIndex;
                 return 1;
             }
             ENDCG
