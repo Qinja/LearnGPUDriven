@@ -69,7 +69,7 @@ Shader "Unlit/Shader7.2.preZ"
                 InterlockedMax(_VisibilityFrameIndexBuffer[i.instanceID], _CurrentFrameIndex, frameIndex);
                 if (frameIndex < _CurrentFrameIndex)
                 {
-                    uint currentIndex = 0;
+                    uint currentIndex;
                     InterlockedAdd(_ArgsBuffer[1], 1, currentIndex);
                     _VisibilityBuffer[currentIndex] = i.instanceID;
                 }
