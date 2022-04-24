@@ -103,7 +103,7 @@ namespace MergeInstance
 		}
 		void Update()
 		{
-			if (Input.GetKeyUp(KeyCode.R))
+			if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow))
 			{
 				UpdateInstance();
 			}
