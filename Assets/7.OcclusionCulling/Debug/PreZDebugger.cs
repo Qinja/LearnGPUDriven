@@ -28,7 +28,6 @@ namespace OcclusionCulling
 			}
 			else
 			{
-
 				Debug.LogError("EarlyZ is invaild");
 			}
 			int randomHash = Random.Range(0x12341234, 0x67896789);
