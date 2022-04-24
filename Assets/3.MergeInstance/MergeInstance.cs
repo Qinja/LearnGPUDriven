@@ -114,7 +114,7 @@ namespace MergeInstance
 			}
 			Graphics.DrawMesh(proxyMesh, Matrix4x4.identity, DMaterial, 0);
 		}
-		private void OnDisable()
+		private void OnDestroy()
 		{
 			instanceBuffer?.Release();
 			vertexBuffer?.Release();

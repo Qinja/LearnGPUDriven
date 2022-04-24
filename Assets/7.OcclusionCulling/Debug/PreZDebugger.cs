@@ -39,7 +39,7 @@ namespace OcclusionCulling
 			DMaterial.SetInt("_Hash", randomHash);
 			Graphics.DrawProcedural(DMaterial, proxyBounds, MeshTopology.Triangles, 3, 1, DCamera);
 		}
-		private void OnDisable()
+		private void OnDestory()
 		{
 			debugBuffer?.Release();
 		}

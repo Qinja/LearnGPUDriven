@@ -91,7 +91,7 @@ namespace FrustumCulling
 			DComputeShader.Dispatch(cullKernelID, kernelGroupX, 1, 1);
 			Graphics.DrawMeshInstancedIndirect(DMesh, 0, DMaterial, proxyBounds, argsBuffer);
 		}
-		private void OnDisable()
+		private void OnDestroy()
 		{
 			argsBuffer?.Release();
 			visibilityBuffer?.Release();

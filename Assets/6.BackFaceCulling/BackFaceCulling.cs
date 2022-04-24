@@ -149,7 +149,7 @@ namespace BackFaceCulling
 			DComputeShader.Dispatch(cullKernelID, kernelGroupX, 1, 1);
 			Graphics.DrawProceduralIndirect(DMaterial, proxyBounds, MeshTopology.Triangles, indexBuffer, argsBuffer);
 		}
-		private void OnDisable()
+		private void OnDestroy()
 		{
 			clustersBuffer?.Release();
 			indexBuffer?.Release();

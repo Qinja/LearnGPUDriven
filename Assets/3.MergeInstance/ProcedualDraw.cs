@@ -96,7 +96,7 @@ namespace MergeInstance
 			}
 			Graphics.DrawProcedural(DMaterial, proxyBounds, MeshTopology.Triangles, (int)MESH_VERTEX_COUNT, 125 * 2);
 		}
-		private void OnDisable()
+		private void OnDestroy()
 		{
 			instanceBuffer?.Release();
 			vertexBuffer?.Release();

@@ -118,7 +118,7 @@ namespace OcclusionCulling
 			Graphics.DrawMeshInstancedIndirect(DMesh, 0, DMaterial, proxyBounds, argsBuffer);
 			frameIndex++;
 		}
-		private void OnDisable()
+		private void OnDestroy()
 		{
 			visibilityBuffer?.Release();
 			instanceBuffer?.Release();

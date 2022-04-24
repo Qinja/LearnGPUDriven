@@ -109,7 +109,7 @@ namespace MergeInstance
 			}
 			Graphics.DrawMeshInstanced(proxyMesh, 0, DMaterial, models);
 		}
-		private void OnDisable()
+		private void OnDestroy()
 		{
 			instanceBuffer?.Release();
 			vertexBuffer?.Release();

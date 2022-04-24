@@ -93,7 +93,7 @@ namespace FrustumCulling
 			}
 			return true;
 		}
-		private void OnDisable()
+		private void OnDestroy()
 		{
 			instanceBuffer?.Release();
 		}

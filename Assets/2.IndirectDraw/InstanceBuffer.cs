@@ -52,7 +52,7 @@ namespace IndirectDraw
 			}
 			Graphics.DrawMeshInstanced(DMesh, 0, DMaterial, models, Count);
 		}
-		private void OnDisable()
+		private void OnDestroy()
 		{
 			instanceBuffer?.Release();
 		}

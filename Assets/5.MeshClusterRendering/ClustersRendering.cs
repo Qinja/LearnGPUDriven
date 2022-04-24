@@ -63,7 +63,7 @@ namespace MeshClusterRendering
 			}
 			Graphics.DrawProcedural(DMaterial, proxyBounds, MeshTopology.Quads, CLUSTER_VERTEX_COUNT, Count * DClusters.ClusterCount);
 		}
-		private void OnDisable()
+		private void OnDestroy()
 		{
 			instanceBuffer?.Release();
 			vertexBuffer?.Release();
