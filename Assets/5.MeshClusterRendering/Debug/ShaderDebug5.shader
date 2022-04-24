@@ -9,9 +9,7 @@ Shader "Custom/ShaderDebug5"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
         Cull Off
-
         CGPROGRAM
         #pragma surface surf Standard fullforwardshadows
 

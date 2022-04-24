@@ -1,12 +1,7 @@
 Shader "Unlit/Shader2.2"
 {
-    Properties
-    {
-    }
     SubShader
     {
-        Tags { "RenderType" = "Opaque" }
-
         Pass
         {
             CGPROGRAM
@@ -14,7 +9,6 @@ Shader "Unlit/Shader2.2"
             #pragma fragment frag
             #pragma shader_feature INSTANCING_ON
             #define UNITY_INSTANCING_ENABLED
-            //#define UNITY_DONT_INSTANCE_OBJECT_MATRICES
 
             #include "UnityCG.cginc"
 

@@ -6,8 +6,6 @@ Shader "Unlit/Shader5.2"
     }
     SubShader
     {
-        Tags { "RenderType" = "Opaque" }
-
         Pass
         {
             Cull Off

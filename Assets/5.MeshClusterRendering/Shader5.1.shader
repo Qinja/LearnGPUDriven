@@ -1,12 +1,7 @@
 Shader "Unlit/Shader5.1"
 {
-    Properties
-    {
-    }
     SubShader
     {
-        Tags { "RenderType" = "Opaque" }
-
         Pass
         {
             CGPROGRAM

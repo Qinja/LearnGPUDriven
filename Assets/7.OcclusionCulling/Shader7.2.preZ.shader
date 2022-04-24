@@ -1,14 +1,7 @@
 Shader "Unlit/Shader7.2.preZ"
 {
-    Properties
-    {
-    }
     SubShader
     {
-        Tags
-        {
-            "Queue" = "AlphaTest-2"
-        }
         Pass
         {
             ZWrite Off

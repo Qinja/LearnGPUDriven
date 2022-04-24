@@ -1,8 +1,5 @@
 Shader "Unlit/ShaderDebug7"
 {
-    Properties
-    {
-    }
     SubShader
     {
         Pass

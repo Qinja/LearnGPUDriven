@@ -6,8 +6,6 @@ Shader "Unlit/Shader0.2 "
     }
     SubShader
     {
-        Tags { "RenderType" = "Opaque" }
-
         Pass
         {
             CGPROGRAM
