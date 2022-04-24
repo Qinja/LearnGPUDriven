@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace OcclusionCulling
 {
@@ -7,7 +8,7 @@ namespace OcclusionCulling
 		public Mesh DMesh;
 		public Camera DCamera;
 		public Material DMaterial;
-		public Material DOcclusionMaterial;
+		public Material DMaterialPreZ;
 		public int Count;
 
 		private uint indexCount;
@@ -16,15 +17,18 @@ namespace OcclusionCulling
 		private ComputeBuffer visibilityBuffer;
 		private ComputeBuffer visibilityFrameIndexBuffer;
 		private ComputeBuffer instanceBuffer;
-		private GraphicsBuffer occlusionCubeIndexBuffer;
+		private GraphicsBuffer preZCubeIndexBuffer;
+		private CommandBuffer preZCommandBuffer;
 		private int frameIndex;
 		private uint[] visibilities;
 		private bool occlusionVaild = false;
+		private uint[] argsData;
 		void Start()
 		{
 			proxyBounds = new Bounds(Vector3.zero, 1000.0f * Vector3.one);
 			argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
 			indexCount = DMesh.GetIndexCount(0);
+			argsData = new uint[5] { indexCount, 0, 0, 0, 0 };
 			var indexData = new ushort[36] {
 				1,0,3, 1,3,2,
 				0,1,5, 0,5,4,
@@ -33,11 +37,25 @@ namespace OcclusionCulling
 				7,6,2, 7,2,3,
 				4,5,6, 4,6,7,
 			};
-			occlusionCubeIndexBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Index, indexData.Length, sizeof(ushort));
-			occlusionCubeIndexBuffer.SetData(indexData);
-			DOcclusionMaterial.SetVector("_BoundsExtent", DMesh.bounds.extents);
-			DOcclusionMaterial.SetVector("_BoundsCenter", DMesh.bounds.center);
+			preZCubeIndexBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Index, indexData.Length, sizeof(ushort));
+			preZCubeIndexBuffer.SetData(indexData);
+			DMaterialPreZ.SetVector("_BoundsExtent", DMesh.bounds.extents);
+			DMaterialPreZ.SetVector("_BoundsCenter", DMesh.bounds.center);
+			InitCommandBuffer();
 			UpdateInstance();
+		}
+		private void InitCommandBuffer()
+        {
+			preZCommandBuffer = new CommandBuffer();
+			preZCommandBuffer.name = gameObject.name;
+			DCamera.AddCommandBuffer(CameraEvent.AfterForwardOpaque, preZCommandBuffer);
+		}
+		private void UpdateCommandBuffer()
+		{
+			preZCommandBuffer.Clear();
+			preZCommandBuffer.SetRandomWriteTarget(1, visibilityFrameIndexBuffer);
+			preZCommandBuffer.DrawProcedural(preZCubeIndexBuffer, Matrix4x4.identity, DMaterialPreZ, 0, MeshTopology.Triangles, 36, Count);
+			preZCommandBuffer.ClearRandomWriteTargets();
 		}
 		private void UpdateInstance()
 		{
@@ -65,15 +83,15 @@ namespace OcclusionCulling
 			visibilityFrameIndexBuffer?.Release();
 			visibilityFrameIndexBuffer = new ComputeBuffer(Count, sizeof(uint));
 			visibilityFrameIndexBuffer.SetData(new uint[Count]);
-			Graphics.SetRandomWriteTarget(1, visibilityFrameIndexBuffer);
 
 			frameIndex = Mathf.Max(frameIndex, Count);
 			visibilities = new uint[Count];
 			occlusionVaild = false;
-			DOcclusionMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
-			DOcclusionMaterial.SetBuffer("_VisibilityFrameIndexBuffer", visibilityFrameIndexBuffer);
+			DMaterialPreZ.SetBuffer("_InstanceBuffer", instanceBuffer);
+			DMaterialPreZ.SetBuffer("_VisibilityFrameIndexBuffer", visibilityFrameIndexBuffer);
 			DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
 			DMaterial.SetBuffer("_VisibilityBuffer", visibilityBuffer);
+			UpdateCommandBuffer();
 		}
 		void Update()
 		{
@@ -109,12 +127,12 @@ namespace OcclusionCulling
 				}
 				occlusionVaild = true;
 			}
+			argsData[1] = visibleCount;
+			visibilityBuffer.SetData(visibilities);
+			argsBuffer.SetData(argsData);
 
 			//current frame
-			DOcclusionMaterial.SetInt("_CurrentFrameIndex", frameIndex);
-			Graphics.DrawProcedural(DOcclusionMaterial, proxyBounds, MeshTopology.Triangles, occlusionCubeIndexBuffer, 36, Count, DCamera);
-			visibilityBuffer.SetData(visibilities);
-			argsBuffer.SetData(new uint[5] { indexCount, visibleCount, 0, 0, 0 });
+			DMaterialPreZ.SetInt("_CurrentFrameIndex", frameIndex);
 			Graphics.DrawMeshInstancedIndirect(DMesh, 0, DMaterial, proxyBounds, argsBuffer);
 			frameIndex++;
 		}
@@ -124,7 +142,7 @@ namespace OcclusionCulling
 			instanceBuffer?.Release();
 			visibilityFrameIndexBuffer?.Release();
 			argsBuffer?.Release();
-			occlusionCubeIndexBuffer?.Release();
+			preZCubeIndexBuffer?.Release();
 		}
 		struct InstancePara
 		{
