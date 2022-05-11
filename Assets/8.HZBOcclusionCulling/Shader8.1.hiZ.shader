@@ -40,13 +40,14 @@ Shader "Unlit/Shader8.1.hiZ"
             float frag(v2f i) : SV_Target
             {
                 float4 uv = float4(-0.5, 0.5, -0.5, 0.5) * _MainTex_TexelSize.xxyy + i.uv.xxyy;
-                float depth1 = tex2Dlod(_MainTex, float4(uv.xz, 0, 0)).r;
-                float depth2 = tex2Dlod(_MainTex, float4(uv.xw, 0, 0)).r;
-                float depth3 = tex2Dlod(_MainTex, float4(uv.yz, 0, 0)).r;
-                float depth4 = tex2Dlod(_MainTex, float4(uv.yw, 0, 0)).r;
-                float2 depth5 = float2(min(depth1, depth2), min(depth3, depth4));
-                float depth6 = min(depth5.x, depth5.y);
-                return depth6;
+                float4 depthSample4;
+                depthSample4.x = tex2Dlod(_MainTex, float4(uv.xz, 0, 0)).r;
+                depthSample4.y = tex2Dlod(_MainTex, float4(uv.xw, 0, 0)).r;
+                depthSample4.z = tex2Dlod(_MainTex, float4(uv.yz, 0, 0)).r;
+                depthSample4.w = tex2Dlod(_MainTex, float4(uv.yw, 0, 0)).r;
+                float2 depthSample2 = min(depthSample4.xy, depthSample4.zw);
+                float depthSample = min(depthSample2.x, depthSample2.y);
+                return depthSample;
             }
             ENDCG
         }
