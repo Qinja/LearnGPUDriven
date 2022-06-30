@@ -6,7 +6,7 @@ Shader "Unlit/ShaderDebug7"
         {
             ZWrite Off
             ZTest Never
-            ColorMask A
+            ColorMask 0
             Cull Off
             CGPROGRAM
             #pragma target 5.0

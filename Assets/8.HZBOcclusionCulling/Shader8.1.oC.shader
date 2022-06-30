@@ -6,7 +6,7 @@ Shader "Unlit/Shader8.1.oC"
         {
             ZWrite Off
             ZTest Never
-            ColorMask A
+            ColorMask 0
             CGPROGRAM
             #pragma target 5.0
             #pragma vertex vert

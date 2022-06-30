@@ -5,7 +5,7 @@ Shader "Unlit/Shader7.1.preZ"
         Pass
         {
             ZWrite Off
-            ColorMask A
+            ColorMask 0
             CGPROGRAM
             #pragma target 5.0
             #pragma vertex vert
