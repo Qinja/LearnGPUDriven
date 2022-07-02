@@ -28,6 +28,7 @@ public class HiZGenerator : MonoBehaviour
         var currentSize = new Vector2Int(Screen.width, Screen.height);
         if (screenSize != currentSize)
         {
+            cameraComponent.targetTexture = null;
             colorBuffer?.Release();
             depthBuffer?.Release();
             screenSize = currentSize;
