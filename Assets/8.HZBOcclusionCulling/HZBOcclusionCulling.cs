@@ -15,10 +15,8 @@ namespace HZBOcclusionCulling
 		private Bounds proxyBounds;
 		private ComputeBuffer argsBuffer;
 		private ComputeBuffer visibilityBuffer;
-		private ComputeBuffer visibilityFrameIndexBuffer;
 		private ComputeBuffer instanceBuffer;
 		private CommandBuffer hzbCommandBuffer;
-		private int frameIndex;
 		void Start()
 		{
 			proxyBounds = new Bounds(Vector3.zero, 1000.0f * Vector3.one);
@@ -43,9 +41,8 @@ namespace HZBOcclusionCulling
 		private void UpdateCommandBuffer()
 		{
 			hzbCommandBuffer.Clear();
-			hzbCommandBuffer.SetRandomWriteTarget(1, visibilityFrameIndexBuffer);
-			hzbCommandBuffer.SetRandomWriteTarget(2, visibilityBuffer);
-			hzbCommandBuffer.SetRandomWriteTarget(3, argsBuffer);
+			hzbCommandBuffer.SetRandomWriteTarget(1, visibilityBuffer);
+			hzbCommandBuffer.SetRandomWriteTarget(2, argsBuffer);
 			hzbCommandBuffer.SetBufferData(argsBuffer, new uint[5] { DMesh.GetIndexCount(0), 0, 0, 0, 0 });
 			hzbCommandBuffer.DrawProcedural(Matrix4x4.identity, DMaterialHZBOcclusion, 0, MeshTopology.Points, Count);
 			hzbCommandBuffer.ClearRandomWriteTargets();
@@ -53,7 +50,6 @@ namespace HZBOcclusionCulling
 		private void UpdateInstance()
 		{
 			if (Count < 1) Count = 1;
-			frameIndex = Mathf.Max(frameIndex, Count);
 			var instanceParas = new InstancePara[Count];
 			var row = Mathf.FloorToInt(Mathf.Pow(Count - 1, 1.0f / 3.0f)) + 1;
 			var parentPosition = transform.position;
@@ -75,12 +71,8 @@ namespace HZBOcclusionCulling
 			instanceBuffer.SetData(instanceParas);
 			visibilityBuffer?.Release();
 			visibilityBuffer = new ComputeBuffer(Count, sizeof(uint));
-			visibilityFrameIndexBuffer?.Release();
-			visibilityFrameIndexBuffer = new ComputeBuffer(Count, sizeof(uint));
-			visibilityFrameIndexBuffer.SetData(new uint[Count]);
 
 			DMaterialHZBOcclusion.SetBuffer("_InstanceBuffer", instanceBuffer);
-			DMaterialHZBOcclusion.SetBuffer("_VisibilityFrameIndexBuffer", visibilityFrameIndexBuffer);
 			DMaterialHZBOcclusion.SetBuffer("_VisibilityBuffer", visibilityBuffer);
 			DMaterialHZBOcclusion.SetBuffer("_ArgsBuffer", argsBuffer);
 			DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
@@ -101,15 +93,12 @@ namespace HZBOcclusionCulling
 			}
 
 			//current frame
-			DMaterialHZBOcclusion.SetInt("_CurrentFrameIndex", frameIndex);
 			Graphics.DrawMeshInstancedIndirect(DMesh, 0, DMaterial, proxyBounds, argsBuffer);
-			frameIndex++;
 		}
 		private void OnDestroy()
 		{
 			visibilityBuffer?.Release();
 			instanceBuffer?.Release();
-			visibilityFrameIndexBuffer?.Release();
 			argsBuffer?.Release();
 		}
 		struct InstancePara

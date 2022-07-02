@@ -30,13 +30,11 @@ Shader "Unlit/Shader8.1.oC"
                 float4 color;
             };
 
-            RWStructuredBuffer<uint> _VisibilityFrameIndexBuffer : register(u1);
-            RWStructuredBuffer<uint> _VisibilityBuffer: register(u2);
-            RWStructuredBuffer<uint> _ArgsBuffer: register(u3);
+            RWStructuredBuffer<uint> _VisibilityBuffer: register(u1);
+            RWStructuredBuffer<uint> _ArgsBuffer: register(u2);
             StructuredBuffer<InstancePara> _InstanceBuffer;
             float3 _BoundsExtent;
             float3 _BoundsCenter;
-            uint _CurrentFrameIndex;
             sampler2D _HiZBuffer;
             float4 _HiZBuffer_TexelSize;
             v2f vert(appdata v)
@@ -76,14 +74,9 @@ Shader "Unlit/Shader8.1.oC"
 
                     if (boundsMaxClip.z >= depth)
                     {
-                        uint frameIndex;
-                        InterlockedMax(_VisibilityFrameIndexBuffer[v.vertexID], _CurrentFrameIndex, frameIndex);
-                        if (frameIndex < _CurrentFrameIndex)
-                        {
-                            uint currentIndex;
-                            InterlockedAdd(_ArgsBuffer[1], 1, currentIndex);
-                            _VisibilityBuffer[currentIndex] = v.vertexID;
-                        }
+                        uint currentIndex;
+                        InterlockedAdd(_ArgsBuffer[1], 1, currentIndex);
+                        _VisibilityBuffer[currentIndex] = v.vertexID;
                     }
                 }
 
