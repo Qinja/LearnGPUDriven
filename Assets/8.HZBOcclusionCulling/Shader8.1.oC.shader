@@ -51,35 +51,46 @@ Shader "Unlit/Shader8.1.oC"
                     float3(+1, -1, +1),
                 };
                 InstancePara para = _InstanceBuffer[v.vertexID];
+                float4x4 localToClip = mul(UNITY_MATRIX_VP, para.model);
                 float3 boundsMinClip = float3(10, 10, 10);
                 float3 boundsMaxClip = float3(-10, -10, -10);
                 [unroll(8)]
                 for (int i = 0; i < 8; i++)
                 {
                     float3 cornerLocal = _BoundsCenter + _BoundsExtent * cubeCorner[i];
-                    float4 cornerWorld = mul(para.model, float4(cornerLocal, 1));
-                    float4 cornerClip = mul(UNITY_MATRIX_VP, cornerWorld);
-                    cornerClip.xyz = cornerClip.xyz / cornerClip.w;
-                    boundsMinClip = min(boundsMinClip, cornerClip.xyz);
-                    boundsMaxClip = max(boundsMaxClip, cornerClip.xyz);
+                    float4 cornerClip = mul(localToClip, float4(cornerLocal, 1));
+                    if (cornerClip.w > 0.0001)
+                    {
+                        cornerClip.xyz = cornerClip.xyz / cornerClip.w;
+                        boundsMinClip = min(boundsMinClip, cornerClip.xyz);
+                        boundsMaxClip = max(boundsMaxClip, cornerClip.xyz);
+                    }
                 }
-                if (boundsMinClip.x <= 1 && boundsMaxClip.x >= -1 && boundsMinClip.y <= 1 && boundsMaxClip.y >= -1 && boundsMinClip.z <= 1 && boundsMaxClip.z >= 0)
+                boundsMinClip = clamp(boundsMinClip, float3(-1, -1, 0), 1);
+                boundsMaxClip = clamp(boundsMaxClip, float3(-1, -1, 0), 1);
+                if (all(boundsMaxClip > boundsMinClip))
                 {
-                    float2 boundsSizeClip = 0.5 * (boundsMaxClip.xy - boundsMinClip.xy);
-                    float2 boundsSizeScreen = min(boundsSizeClip.xy, 1) * _HiZBuffer_TexelSize.zw;
-                    int2 boundsLevel = ceil(log2(boundsSizeScreen));
-                    int maxLevel =  max(boundsLevel.x, boundsLevel.y);
-                    float2 boundsCenterClip = float2(0.25, -0.25) * (boundsMinClip.xy + boundsMaxClip.xy) + 0.5;
-                    float depth = tex2Dlod(_HiZBuffer, float4(boundsCenterClip.xy, 0, maxLevel)).r;
+                    float4 boundsClip = float4(0.5, -0.5, 0.5, -0.5) * float4(boundsMinClip.xy, boundsMaxClip.xy) + 0.5;
+                    float2 boundsSizeClip = boundsClip.zw - boundsClip.xy;
+                    float2 boundsSizeScreen = boundsSizeClip * _HiZBuffer_TexelSize.zw;
+                    int boundsLevel = ceil(log2(max(boundsSizeScreen.x, boundsSizeScreen.y)));
 
-                    if (boundsMaxClip.z >= depth)
+                    float4 depthSample4;
+                    depthSample4.x = tex2Dlod(_HiZBuffer, float4(boundsClip.xy, 0, boundsLevel)).r;
+                    depthSample4.y = tex2Dlod(_HiZBuffer, float4(boundsClip.xw, 0, boundsLevel)).r;
+                    depthSample4.z = tex2Dlod(_HiZBuffer, float4(boundsClip.zy, 0, boundsLevel)).r;
+                    depthSample4.w = tex2Dlod(_HiZBuffer, float4(boundsClip.zw, 0, boundsLevel)).r;
+                    float2 depthSample2 = min(depthSample4.xy, depthSample4.zw);
+                    float depthSample = min(depthSample2.x, depthSample2.y);
+                    
+                    if (boundsMaxClip.z >= depthSample)
                     {
                         uint currentIndex;
                         InterlockedAdd(_ArgsBuffer[1], 1, currentIndex);
                         _VisibilityBuffer[currentIndex] = v.vertexID;
                     }
-                }
-
+                } 
+                
                 v2f o;
                 o.vertex = float4(10, 10, 10, 1);
                 return o;

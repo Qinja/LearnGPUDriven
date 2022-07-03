@@ -50,7 +50,7 @@ public class HiZGenerator : MonoBehaviour
                 hzbSize = currentHZBSize;
                 var max = Mathf.Max(hzbSize.x, hzbSize.y);
                 maxMips = 0;
-                while (max > 1)
+                while (max > 2)
                 {
                     max /= 2;
                     maxMips++;
