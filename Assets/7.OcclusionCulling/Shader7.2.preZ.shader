@@ -1,4 +1,4 @@
-Shader "Unlit/Shader7.2.preZ"
+Shader "LearnGPUDriven/Shader7.2.preZ"
 {
     SubShader
     {

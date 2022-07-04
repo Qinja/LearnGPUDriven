@@ -1,4 +1,4 @@
-Shader "Unlit/ShaderDebug7"
+Shader "LearnGPUDriven/ShaderDebug7"
 {
     SubShader
     {

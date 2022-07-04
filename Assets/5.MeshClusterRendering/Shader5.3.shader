@@ -1,4 +1,4 @@
-Shader "Unlit/Shader5.3"
+Shader "LearnGPUDriven/Shader5.3"
 {
     Properties
     {

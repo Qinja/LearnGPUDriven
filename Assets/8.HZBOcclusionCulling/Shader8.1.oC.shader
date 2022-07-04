@@ -1,4 +1,4 @@
-Shader "Unlit/Shader8.1.oC"
+Shader "LearnGPUDriven/Shader8.1.oC"
 {
     SubShader
     {

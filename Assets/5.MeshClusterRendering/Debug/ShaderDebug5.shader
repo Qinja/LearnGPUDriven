@@ -1,4 +1,4 @@
-Shader "Custom/ShaderDebug5"
+Shader "LearnGPUDriven/ShaderDebug5"
 {
     Properties
     {

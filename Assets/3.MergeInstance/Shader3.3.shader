@@ -1,4 +1,4 @@
-Shader "Unlit/Shader3.3"
+Shader "LearnGPUDriven/Shader3.3"
 {
     SubShader
     {

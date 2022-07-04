@@ -1,4 +1,4 @@
-Shader "Unlit/Shader8.1.hiZ"
+Shader "LearnGPUDriven/Shader8.1.hiZ"
 {
     Properties
     {
