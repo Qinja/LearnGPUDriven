@@ -70,19 +70,18 @@ Shader "LearnGPUDriven/Shader8.1.oC"
                 boundsMaxClip = clamp(boundsMaxClip, float3(-1, -1, 0), 1);
                 if (all(boundsMaxClip > boundsMinClip))
                 {
-                    float4 boundsClip = float4(0.5, -0.5, 0.5, -0.5) * float4(boundsMinClip.xy, boundsMaxClip.xy) + 0.5;
-                    float2 boundsSizeClip = boundsClip.zw - boundsClip.xy;
-                    float2 boundsSizeScreen = boundsSizeClip * _HiZBuffer_TexelSize.zw;
+                    float4 boundsTexCoord = float4(0.5, -0.5, 0.5, -0.5) * float4(boundsMinClip.xy, boundsMaxClip.xy) + 0.5;
+                    float2 boundsSizeTexCoord = boundsTexCoord.zy - boundsTexCoord.xw;
+                    float2 boundsSizeScreen = boundsSizeTexCoord * _HiZBuffer_TexelSize.zw;
                     int boundsLevel = ceil(log2(max(boundsSizeScreen.x, boundsSizeScreen.y)));
 
                     float4 depthSample4;
-                    depthSample4.x = tex2Dlod(_HiZBuffer, float4(boundsClip.xy, 0, boundsLevel)).r;
-                    depthSample4.y = tex2Dlod(_HiZBuffer, float4(boundsClip.xw, 0, boundsLevel)).r;
-                    depthSample4.z = tex2Dlod(_HiZBuffer, float4(boundsClip.zy, 0, boundsLevel)).r;
-                    depthSample4.w = tex2Dlod(_HiZBuffer, float4(boundsClip.zw, 0, boundsLevel)).r;
+                    depthSample4.x = tex2Dlod(_HiZBuffer, float4(boundsTexCoord.xy, 0, boundsLevel)).r;
+                    depthSample4.y = tex2Dlod(_HiZBuffer, float4(boundsTexCoord.xw, 0, boundsLevel)).r;
+                    depthSample4.z = tex2Dlod(_HiZBuffer, float4(boundsTexCoord.zy, 0, boundsLevel)).r;
+                    depthSample4.w = tex2Dlod(_HiZBuffer, float4(boundsTexCoord.zw, 0, boundsLevel)).r;
                     float2 depthSample2 = min(depthSample4.xy, depthSample4.zw);
                     float depthSample = min(depthSample2.x, depthSample2.y);
-                    
                     if (boundsMaxClip.z >= depthSample)
                     {
                         uint currentIndex;
@@ -90,7 +89,7 @@ Shader "LearnGPUDriven/Shader8.1.oC"
                         _VisibilityBuffer[currentIndex] = v.vertexID;
                     }
                 } 
-                
+
                 v2f o;
                 o.vertex = float4(10, 10, 10, 1);
                 return o;
