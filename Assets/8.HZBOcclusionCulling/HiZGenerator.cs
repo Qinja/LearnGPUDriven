@@ -77,6 +77,8 @@ public class HiZGenerator : MonoBehaviour
         for (int i = 1; i <= maxMips; i++)
         {
             RenderTexture rtTemp = RenderTexture.GetTemporary(w, h, 0, RenderTextureFormat.RFloat, RenderTextureReadWrite.Linear, 1);
+            rtTemp.name = "HiZBufferIntermediate(mip" + i + ")";
+            rtTemp.filterMode = FilterMode.Point;
             Graphics.Blit(src, rtTemp, DMaterialHiZ);
             if (src != HiZBuffer) RenderTexture.ReleaseTemporary(src);
             Graphics.CopyTexture(rtTemp, 0, 0, HiZBuffer, 0, i);
