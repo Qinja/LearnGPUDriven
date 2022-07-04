@@ -30,7 +30,7 @@ namespace IndirectDraw
 				Count++;
 				UpdateInstance();
 			}
-			else if (Input.GetKey(KeyCode.DownArrow))
+			else if (Input.GetKey(KeyCode.DownArrow) && Count > 1)
 			{
 				Count--;
 				UpdateInstance();

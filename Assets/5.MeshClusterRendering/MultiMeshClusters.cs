@@ -141,7 +141,7 @@ namespace MeshClusterRendering
 				Count = Count + Mathf.Max(Count / 10, 1);
 				UpdateInstance();
 			}
-			else if (Input.GetKey(KeyCode.DownArrow))
+			else if (Input.GetKey(KeyCode.DownArrow) && Count > 1)
 			{
 				Count = Count - Mathf.Max(Count / 10, 1);
 				UpdateInstance();
