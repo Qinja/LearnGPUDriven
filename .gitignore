@@ -60,3 +60,5 @@ crashlytics-build.properties
 
 .vsconfig
 /UserSettings
+/Assets/NonVersionedAssets
+/Assets/NonVersionedAssets.meta
