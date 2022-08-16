@@ -88,7 +88,7 @@ Shader "LearnGPUDriven/Shader8.1.oC"
                         InterlockedAdd(_ArgsBuffer[1], 1, currentIndex);
                         _VisibilityBuffer[currentIndex] = v.vertexID;
                     }
-                } 
+                }
 
                 v2f o;
                 o.vertex = float4(10, 10, 10, 1);
