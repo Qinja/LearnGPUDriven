@@ -6,43 +6,32 @@ public class HiZGenerator : MonoBehaviour
 {
     public Material DMaterialHiZ;
     [NonSerialized]
-    public Action HiZBufferUpdated;
+    public Action<RenderTexture> HiZBufferUpdated;
+    private RenderTexture HiZBuffer;
     private Camera cameraComponent;
-    private RenderTexture colorBuffer;
-    private RenderTexture depthBuffer;
+    private RenderTexture renderTexture;
     private int maxMips;
     private Vector2Int hzbSize = new Vector2Int(-1, -1);
     private Vector2Int screenSize = new Vector2Int(-1, -1);
-    public RenderTexture HiZBuffer { get; private set; }
+    private RenderTexture[] HiZBufferIntermediates;
+    private Material[] hiZMaterialIntermediates;
     void Start()
     {
         cameraComponent = GetComponent<Camera>();
-        UpdateFBAndHZB();
     }
-    private void Update()
-    {
-        UpdateFBAndHZB();
-    }
-    void UpdateFBAndHZB()
+    void OnPreRender()
     {
         var currentSize = new Vector2Int(Screen.width, Screen.height);
         if (screenSize != currentSize)
         {
+            cameraComponent.targetTexture?.Release();
             cameraComponent.targetTexture = null;
-            colorBuffer?.Release();
-            depthBuffer?.Release();
+            renderTexture?.Release();
             screenSize = currentSize;
-            colorBuffer = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.Default)
+            renderTexture = new RenderTexture(Screen.width, Screen.height, 32, RenderTextureFormat.Default)
             {
-                name = "ColorBuffer",
-                filterMode = FilterMode.Point,
+                name = "Scene RenderTexture",
             };
-            depthBuffer = new RenderTexture(Screen.width, Screen.height, 32, RenderTextureFormat.Depth)
-            {
-                name = "DepthBuffer",
-                filterMode = FilterMode.Point,
-            };
-            cameraComponent.SetTargetBuffers(colorBuffer.colorBuffer, depthBuffer.depthBuffer);
 
             var currentHZBSize = new Vector2Int(Mathf.NextPowerOfTwo(currentSize.x) / 2, Mathf.NextPowerOfTwo(currentSize.y) / 2);
             if (hzbSize != currentHZBSize)
@@ -63,29 +52,54 @@ public class HiZGenerator : MonoBehaviour
                     autoGenerateMips = false,
                     filterMode = FilterMode.Point,
                 };
-                HiZBufferUpdated?.Invoke();
+                HiZBufferUpdated?.Invoke(HiZBuffer);
+                if (HiZBufferIntermediates != null)
+                {
+                    for (int i = 0; i < HiZBufferIntermediates.Length; i++)
+                    {
+                        RenderTexture.ReleaseTemporary(HiZBufferIntermediates[i]);
+                    }
+                }
+                HiZBufferIntermediates = new RenderTexture[maxMips];
+                hiZMaterialIntermediates = new Material[maxMips];
+                for (int i = 0, w = hzbSize.x, h = hzbSize.y; i < maxMips; i++)
+                {
+                    w = Mathf.Max(w / 2, 1);
+                    h = Mathf.Max(h / 2, 1);
+                    HiZBufferIntermediates[i] = RenderTexture.GetTemporary(w, h, 0, RenderTextureFormat.RFloat, RenderTextureReadWrite.Linear, 1);
+                    HiZBufferIntermediates[i].name = "HiZBufferIntermediate(mip" + (i + 1) + ")";
+                    HiZBufferIntermediates[i].filterMode = FilterMode.Point;
+                    hiZMaterialIntermediates[i] = new Material(DMaterialHiZ);
+                    hiZMaterialIntermediates[i].SetTexture("_DepthTex", i == 0 ? HiZBuffer : HiZBufferIntermediates[i - 1]);
+                }
             }
         }
+        cameraComponent.targetTexture = renderTexture;
+        DMaterialHiZ.SetTexture("_DepthTex", renderTexture, UnityEngine.Rendering.RenderTextureSubElement.Depth);
     }
-    private void OnRenderImage(RenderTexture source, RenderTexture destination)
+    void OnPostRender()
     {
-        Graphics.Blit(colorBuffer, destination);
-        Graphics.Blit(depthBuffer, HiZBuffer, DMaterialHiZ);
-        var w = HiZBuffer.width / 2;
-        var h = HiZBuffer.height / 2;
-        var src = HiZBuffer;
-        for (int i = 1; i <= maxMips; i++)
+        Graphics.Blit(null, HiZBuffer, DMaterialHiZ);
+        for (int i = 0; i < maxMips; i++)
         {
-            RenderTexture rtTemp = RenderTexture.GetTemporary(w, h, 0, RenderTextureFormat.RFloat, RenderTextureReadWrite.Linear, 1);
-            rtTemp.name = "HiZBufferIntermediate(mip" + i + ")";
-            rtTemp.filterMode = FilterMode.Point;
-            Graphics.Blit(src, rtTemp, DMaterialHiZ);
-            if (src != HiZBuffer) RenderTexture.ReleaseTemporary(src);
-            Graphics.CopyTexture(rtTemp, 0, 0, HiZBuffer, 0, i);
-            src = rtTemp;
-            w = Mathf.Max(w / 2, 1);
-            h = Mathf.Max(h / 2, 1);
+            RenderTexture dst = HiZBufferIntermediates[i];
+            Graphics.Blit(null, dst, hiZMaterialIntermediates[i]);
+            Graphics.CopyTexture(dst, 0, 0, HiZBuffer, 0, i + 1);
         }
-        if (src != HiZBuffer) RenderTexture.ReleaseTemporary(src);
+        Graphics.Blit(renderTexture, (RenderTexture)null);
+        cameraComponent.targetTexture = null;
+    }
+    private void OnDestroy()
+    {
+        if (HiZBufferIntermediates != null)
+        {
+            for (int i = 0; i < HiZBufferIntermediates.Length; i++)
+            {
+                RenderTexture.ReleaseTemporary(HiZBufferIntermediates[i]);
+            }
+        }
+        renderTexture?.Release();
+        HiZBuffer?.Release();
+        HiZBufferUpdated?.Invoke(null);
     }
 }

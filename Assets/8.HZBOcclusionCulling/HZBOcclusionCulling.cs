@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 namespace HZBOcclusionCulling
 {
 	public class HZBOcclusionCulling : MonoBehaviour
-	{
+    {
 		public Mesh DMesh;
 		public Camera DCamera;
 		public HiZGenerator DHiZGenerator;
@@ -26,11 +26,10 @@ namespace HZBOcclusionCulling
 			DHiZGenerator.HiZBufferUpdated += UpdateHiZBuffer;
 			InitCommandBuffer();
 			UpdateInstance();
-			UpdateHiZBuffer();
 		}
-		private void UpdateHiZBuffer()
+		private void UpdateHiZBuffer(RenderTexture HiZBuffer)
 		{
-			DMaterialHZBOcclusion.SetTexture("_HiZBuffer", DHiZGenerator.HiZBuffer);
+			DMaterialHZBOcclusion.SetTexture("_HiZBuffer", HiZBuffer);
 		}
 		private void InitCommandBuffer()
 		{
@@ -97,7 +96,8 @@ namespace HZBOcclusionCulling
 		}
 		private void OnDestroy()
 		{
-			visibilityBuffer?.Release();
+            DHiZGenerator.HiZBufferUpdated -= UpdateHiZBuffer;
+            visibilityBuffer?.Release();
 			instanceBuffer?.Release();
 			argsBuffer?.Release();
 		}

@@ -8,28 +8,17 @@ Shader "LearnGPUDriven/Shader8.1.oC"
             ZTest Never
             ColorMask 0
             CGPROGRAM
-            #pragma target 5.0
+            #pragma target 4.5
             #pragma vertex vert
             #pragma fragment frag
 
             #include "UnityCG.cginc"
-
-            struct appdata
-            {
-                uint vertexID : SV_VertexID;
-            };
-
-            struct v2f
-            {
-                float4 vertex : SV_POSITION;
-            };
 
             struct InstancePara
             {
                 float4x4 model;
                 float4 color;
             };
-
             RWStructuredBuffer<uint> _VisibilityBuffer: register(u1);
             RWStructuredBuffer<uint> _ArgsBuffer: register(u2);
             StructuredBuffer<InstancePara> _InstanceBuffer;
@@ -37,7 +26,8 @@ Shader "LearnGPUDriven/Shader8.1.oC"
             float3 _BoundsCenter;
             sampler2D _HiZBuffer;
             float4 _HiZBuffer_TexelSize;
-            v2f vert(appdata v)
+
+            void vert(uint vertexID : SV_VertexID)
             {
                 static float3 cubeCorner[8] =
                 {
@@ -50,7 +40,7 @@ Shader "LearnGPUDriven/Shader8.1.oC"
                     float3(-1, -1, +1),
                     float3(+1, -1, +1),
                 };
-                InstancePara para = _InstanceBuffer[v.vertexID];
+                InstancePara para = _InstanceBuffer[vertexID];
                 float4x4 localToClip = mul(UNITY_MATRIX_VP, para.model);
                 float3 boundsMinClip = float3(10, 10, 10);
                 float3 boundsMaxClip = float3(-10, -10, -10);
@@ -86,19 +76,12 @@ Shader "LearnGPUDriven/Shader8.1.oC"
                     {
                         uint currentIndex;
                         InterlockedAdd(_ArgsBuffer[1], 1, currentIndex);
-                        _VisibilityBuffer[currentIndex] = v.vertexID;
+                        _VisibilityBuffer[currentIndex] = vertexID;
                     }
                 }
-
-                v2f o;
-                o.vertex = float4(10, 10, 10, 1);
-                return o;
             }
 
-            fixed frag() : SV_Target
-            {
-                return 0;
-            }
+            void frag() { }
             ENDCG
         }
     }
