@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 
 [RequireComponent(typeof(Camera))]
 public class HiZGenerator : MonoBehaviour
@@ -45,7 +46,7 @@ public class HiZGenerator : MonoBehaviour
                     maxMips++;
                 }
                 HiZBuffer?.Release();
-                HiZBuffer = new RenderTexture(hzbSize.x, hzbSize.y, 0, RenderTextureFormat.RFloat, maxMips + 1)
+                HiZBuffer = new RenderTexture(hzbSize.x, hzbSize.y, 0, GraphicsFormat.R32_UInt, maxMips + 1)
                 {
                     name = "HiZBuffer",
                     useMipMap = true,
@@ -66,7 +67,7 @@ public class HiZGenerator : MonoBehaviour
                 {
                     w = Mathf.Max(w / 2, 1);
                     h = Mathf.Max(h / 2, 1);
-                    HiZBufferIntermediates[i] = RenderTexture.GetTemporary(w, h, 0, RenderTextureFormat.RFloat, RenderTextureReadWrite.Linear, 1);
+                    HiZBufferIntermediates[i] = RenderTexture.GetTemporary(w, h, 0, GraphicsFormat.R32_UInt);
                     HiZBufferIntermediates[i].name = "HiZBufferIntermediate(mip" + (i + 1) + ")";
                     HiZBufferIntermediates[i].filterMode = FilterMode.Point;
                     hiZMaterialIntermediates[i] = new Material(DMaterialHiZ);

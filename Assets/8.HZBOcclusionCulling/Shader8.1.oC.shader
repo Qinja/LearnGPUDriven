@@ -24,7 +24,9 @@ Shader "LearnGPUDriven/Shader8.1.oC"
             StructuredBuffer<InstancePara> _InstanceBuffer;
             float3 _BoundsExtent;
             float3 _BoundsCenter;
-            sampler2D _HiZBuffer;
+            
+            Texture2D _HiZBuffer;
+            SamplerState sampler_HiZBuffer;
             float4 _HiZBuffer_TexelSize;
 
             void vert(uint vertexID : SV_VertexID)
@@ -66,10 +68,10 @@ Shader "LearnGPUDriven/Shader8.1.oC"
                     int boundsLevel = ceil(log2(max(boundsSizeScreen.x, boundsSizeScreen.y)));
 
                     float4 depthSample4;
-                    depthSample4.x = tex2Dlod(_HiZBuffer, float4(boundsTexCoord.xy, 0, boundsLevel)).r;
-                    depthSample4.y = tex2Dlod(_HiZBuffer, float4(boundsTexCoord.xw, 0, boundsLevel)).r;
-                    depthSample4.z = tex2Dlod(_HiZBuffer, float4(boundsTexCoord.zy, 0, boundsLevel)).r;
-                    depthSample4.w = tex2Dlod(_HiZBuffer, float4(boundsTexCoord.zw, 0, boundsLevel)).r;
+                    depthSample4.x = _HiZBuffer.SampleLevel(sampler_HiZBuffer, boundsTexCoord.xy, boundsLevel).r;
+                    depthSample4.y = _HiZBuffer.SampleLevel(sampler_HiZBuffer, boundsTexCoord.xw, boundsLevel).r;
+                    depthSample4.z = _HiZBuffer.SampleLevel(sampler_HiZBuffer, boundsTexCoord.zy, boundsLevel).r;
+                    depthSample4.w = _HiZBuffer.SampleLevel(sampler_HiZBuffer, boundsTexCoord.zw, boundsLevel).r;
                     float2 depthSample2 = min(depthSample4.xy, depthSample4.zw);
                     float depthSample = min(depthSample2.x, depthSample2.y);
                     if (boundsMaxClip.z >= depthSample)

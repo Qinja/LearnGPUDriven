@@ -1,14 +1,11 @@
 Shader "LearnGPUDriven/Shader8.1.hiZ"
 {
-    Properties
-    {
-        _DepthTex ("Texture", 2D) = "black" {}
-    }
     SubShader
     {
         Pass
         {
             CGPROGRAM
+            #pragma target 4.5
             #pragma vertex vert
             #pragma fragment frag
 
@@ -26,7 +23,8 @@ Shader "LearnGPUDriven/Shader8.1.hiZ"
                 float2 uv : TEXCOORD0;
             };
 
-            sampler2D _DepthTex;
+            Texture2D _DepthTex;
+            SamplerState sampler_DepthTex;
             float4 _DepthTex_TexelSize;
 
             v2f vert(appdata v)
@@ -39,12 +37,7 @@ Shader "LearnGPUDriven/Shader8.1.hiZ"
 
             float frag(v2f i) : SV_Target
             {
-                float4 uv = float4(-0.5, 0.5, -0.5, 0.5) * _DepthTex_TexelSize.xxyy + i.uv.xxyy;
-                float4 depthSample4;
-                depthSample4.x = tex2Dlod(_DepthTex, float4(uv.xz, 0, 0)).r;
-                depthSample4.y = tex2Dlod(_DepthTex, float4(uv.xw, 0, 0)).r;
-                depthSample4.z = tex2Dlod(_DepthTex, float4(uv.yz, 0, 0)).r;
-                depthSample4.w = tex2Dlod(_DepthTex, float4(uv.yw, 0, 0)).r;
+                float4 depthSample4 = _DepthTex.Gather(sampler_DepthTex, i.uv);
                 float2 depthSample2 = min(depthSample4.xy, depthSample4.zw);
                 float depthSample = min(depthSample2.x, depthSample2.y);
                 return depthSample;
