@@ -82,6 +82,13 @@ namespace OcclusionCulling
             visibilityBuffer?.Release();
             visibilityBuffer = new ComputeBuffer(Count, sizeof(uint));
             visibilityBuffer.name = nameof(visibilityBuffer) + ":" + visibilityBuffer.count;
+            var visibilityData = new uint[Count];
+            for (uint i = 0; i < Count; i++)
+            {
+                visibilityData[i] = i;
+            }
+            visibilityBuffer.SetData(visibilityData);
+            argsBuffer.SetData(new uint[5] { DMesh.GetIndexCount(0), (uint)Count, 0, 0, 0 });
             visibilityFrameIndexBuffer?.Release();
             visibilityFrameIndexBuffer = new ComputeBuffer(Count, sizeof(uint));
             visibilityFrameIndexBuffer.name = nameof(visibilityFrameIndexBuffer) + ":" + visibilityFrameIndexBuffer.count;
