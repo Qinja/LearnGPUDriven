@@ -42,7 +42,7 @@ namespace HZBOcclusionCulling
 			argsBuffer.SetData(new uint[5] { DHZBOcclusionCulling.DMesh.GetIndexCount(0), (uint)count, 0, 0, 0 });
 			DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
 		}
-		void Update()
+		void LateUpdate()
 		{
 			UpdateInstance();
 			Graphics.DrawMeshInstancedIndirect(DHZBOcclusionCulling.DMesh, 0, DMaterial, proxyBounds, argsBuffer);
