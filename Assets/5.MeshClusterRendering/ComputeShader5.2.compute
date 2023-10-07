@@ -34,7 +34,7 @@ void FrustumCullMain(uint3 id : SV_DispatchThreadID)
 	if (id.x < _Count)
 	{
 		float4x4 modelTranspose = transpose(_InstanceBuffer[id.x].model);
-		for (uint i = 0; i < 6; i++)
+		[unroll] for (uint i = 0; i < 6; i++)
 		{
 			_CullingPlanes[i] = mul(modelTranspose, _CullingPlanes[i]);
 		}
@@ -45,8 +45,7 @@ void FrustumCullMain(uint3 id : SV_DispatchThreadID)
 		{
 			BoundingBox bounds = _BoundingBoxes[n];
 			bool visible = true;
-			[unroll]
-			for (uint i = 0; i < 6; i++)
+			[unroll] for (uint i = 0; i < 6; i++)
 			{
 				if (!PlaneTest(_CullingPlanes[i], bounds.center, bounds.extent))
 				{
