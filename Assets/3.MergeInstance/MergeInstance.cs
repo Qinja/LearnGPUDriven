@@ -53,8 +53,8 @@ namespace MergeInstance
             }
             vertexBuffer = new ComputeBuffer(mergeVertexData.Length, 3 * sizeof(float));
             vertexBuffer.name = nameof(vertexBuffer) + ":" + vertexBuffer.count;
-            indexBuffer.name = nameof(indexBuffer) + ":" + indexBuffer.count;
             indexBuffer = new ComputeBuffer(mergeIndexData.Length, sizeof(int));
+            indexBuffer.name = nameof(indexBuffer) + ":" + indexBuffer.count;
             vertexBuffer.SetData(mergeVertexData);
             indexBuffer.SetData(mergeIndexData);
             DMaterial.SetBuffer("_VertexBuffer", vertexBuffer);
