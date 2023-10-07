@@ -36,7 +36,7 @@ namespace BackFaceCulling
                 meshes[i].UploadMeshData(false);
             }
         }
-        void Update()
+        void LateUpdate()
         {
             if (ShowAll)
             {
