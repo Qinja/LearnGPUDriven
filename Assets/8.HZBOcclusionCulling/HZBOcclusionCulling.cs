@@ -44,7 +44,7 @@ namespace HZBOcclusionCulling
 			hzbCommandBuffer.SetRandomWriteTarget(1, visibilityBuffer);
 			hzbCommandBuffer.SetRandomWriteTarget(2, argsBuffer);
 			hzbCommandBuffer.SetBufferData(argsBuffer, new uint[5] { DMesh.GetIndexCount(0), 0, 0, 0, 0 });
-			hzbCommandBuffer.DrawProcedural(Matrix4x4.identity, DMaterialHZBOcclusion, 0, MeshTopology.Triangles, Count);
+			hzbCommandBuffer.DrawProcedural(Matrix4x4.identity, DMaterialHZBOcclusion, 0, MeshTopology.Points, Count);
 			hzbCommandBuffer.ClearRandomWriteTargets();
 		}
 		private void UpdateInstance()
