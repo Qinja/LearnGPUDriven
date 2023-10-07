@@ -15,7 +15,8 @@ namespace HZBOcclusionCulling
 		{
 			proxyBounds = new Bounds(Vector3.zero, 1000.0f * Vector3.one);
 			argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
-			UpdateInstance();
+            argsBuffer.name = "ArgsBuffer";
+            UpdateInstance();
 		}
 		private void UpdateInstance()
 		{
@@ -38,7 +39,8 @@ namespace HZBOcclusionCulling
 			}
 			instanceBuffer?.Release();
 			instanceBuffer = new ComputeBuffer(count, InstancePara.SIZE);
-			instanceBuffer.SetData(instanceParas);
+			instanceBuffer.name = nameof(instanceBuffer) + ":" + instanceBuffer.count;
+            instanceBuffer.SetData(instanceParas);
 			argsBuffer.SetData(new uint[5] { DHZBOcclusionCulling.DMesh.GetIndexCount(0), (uint)count, 0, 0, 0 });
 			DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
 		}

@@ -30,7 +30,8 @@ namespace BackFaceCulling
 		{
 			proxyBounds = new Bounds(Vector3.zero, 1000.0f * Vector3.one);
 			argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
-			cullKernelID = DComputeShader.FindKernel("ClusterCullMain");
+            argsBuffer.name = nameof(argsBuffer);
+            cullKernelID = DComputeShader.FindKernel("ClusterCullMain");
 			DComputeShader.SetBuffer(cullKernelID, "_ArgsBuffer", argsBuffer);
 			InitClusters();
 			InitIndexBuffer();
@@ -66,10 +67,12 @@ namespace BackFaceCulling
 				bounds.AddRange(clusters.ClusterBounds);
 			}
 			vertexBuffer = new ComputeBuffer(vertexData.Count, 3 * sizeof(float));
-			vertexBuffer.SetData(vertexData);
+            vertexBuffer.name = nameof(vertexBuffer) + ":" + vertexBuffer.count;
+            vertexBuffer.SetData(vertexData);
 			DMaterial.SetBuffer("_VertexBuffer", vertexBuffer);
 			boundsBuffer = new ComputeBuffer(bounds.Count, ClustersData.ClusterBoundsData.SIZE);
-			boundsBuffer.SetData(bounds);
+            boundsBuffer.name = nameof(boundsBuffer) + ":" + boundsBuffer.count;
+            boundsBuffer.SetData(bounds);
 			DComputeShader.SetBuffer(cullKernelID, "_ClusterBounds", boundsBuffer);
 		}
 		private void UpdateInstance()
@@ -105,9 +108,12 @@ namespace BackFaceCulling
 			visibilityBuffer?.Release();
 			clustersBuffer?.Release();
 			instanceBuffer = new ComputeBuffer(Count, InstancePara.SIZE);
+			instanceBuffer.name = nameof(instanceBuffer) + ":" + instanceBuffer.count;
 			visibilityBuffer = new ComputeBuffer(clusterCount, sizeof(uint));
-			clustersBuffer = new ComputeBuffer(clusterCount, sizeof(uint));
-			instanceBuffer.SetData(instanceParas);
+            visibilityBuffer.name = nameof(visibilityBuffer) + ":" + visibilityBuffer.count;
+            clustersBuffer = new ComputeBuffer(clusterCount, sizeof(uint));
+            clustersBuffer.name = nameof(clustersBuffer) + ":" + clustersBuffer.count;
+            instanceBuffer.SetData(instanceParas);
 			visibilityBuffer.SetData(new uint[clusterCount]);
 			clustersBuffer.SetData(clusterData);
 

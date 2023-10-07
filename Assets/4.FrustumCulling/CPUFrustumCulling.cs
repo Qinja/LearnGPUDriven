@@ -38,6 +38,7 @@ namespace FrustumCulling
 			}
 			instanceBuffer?.Release();
 			instanceBuffer = new ComputeBuffer(Count, InstancePara.SIZE);
+            instanceBuffer.name = nameof(instanceBuffer) + ":" + instanceBuffer.count;
 			DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
 		}
 		void Update()

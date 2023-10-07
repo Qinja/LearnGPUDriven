@@ -27,6 +27,7 @@ namespace OcclusionCulling
 		{
 			proxyBounds = new Bounds(Vector3.zero, 1000.0f * Vector3.one);
 			argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
+            argsBuffer.name = nameof(argsBuffer);
 			indexCount = DMesh.GetIndexCount(0);
 			argsData = new uint[5] { indexCount, 0, 0, 0, 0 };
 			var indexData = new ushort[36] {
@@ -77,14 +78,17 @@ namespace OcclusionCulling
 			}
 			instanceBuffer?.Release();
 			instanceBuffer = new ComputeBuffer(Count, InstancePara.SIZE);
+			instanceBuffer.name = nameof(instanceBuffer) + ":" + instanceBuffer.count;
 			instanceBuffer.SetData(instanceParas);
 			visibilityBuffer?.Release();
 			visibilityBuffer = new ComputeBuffer(Count, sizeof(uint));
-			visibilityFrameIndexBuffer?.Release();
+            visibilityBuffer.name = nameof(visibilityBuffer) + ":" + visibilityBuffer.count;
+            visibilityFrameIndexBuffer?.Release();
 			visibilityFrameIndexBuffer = new ComputeBuffer(Count, sizeof(uint));
+            visibilityFrameIndexBuffer.name = nameof(visibilityFrameIndexBuffer) + ":" + visibilityFrameIndexBuffer.count;
 			visibilityFrameIndexBuffer.SetData(new uint[Count]);
 
-			frameIndex = Mathf.Max(frameIndex, Count);
+            frameIndex = Mathf.Max(frameIndex, Count);
 			visibilities = new uint[Count];
 			occlusionVaild = false;
 			DMaterialPreZ.SetBuffer("_InstanceBuffer", instanceBuffer);

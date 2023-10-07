@@ -24,7 +24,8 @@ namespace FrustumCulling
 		{
 			proxyBounds = new Bounds(Vector3.zero, 1000.0f * Vector3.one);
 			argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
-			cullKernelID = DComputeShader.FindKernel("FrustumCullMain");
+            argsBuffer.name = nameof(argsBuffer);
+            cullKernelID = DComputeShader.FindKernel("FrustumCullMain");
 			indexCount = DMesh.GetIndexCount(0);
 			var bounds = DMesh.bounds;
 			DComputeShader.SetVector("_BoundsCenter", bounds.center);
@@ -52,10 +53,12 @@ namespace FrustumCulling
 			}
 			instanceBuffer?.Release();
 			instanceBuffer = new ComputeBuffer(Count, InstancePara.SIZE);
+			instanceBuffer.name = nameof(instanceBuffer) + ":" + instanceBuffer.count;
 			instanceBuffer.SetData(instanceParas);
 			visibilityBuffer?.Release();
 			visibilityBuffer = new ComputeBuffer(Count, sizeof(uint));
-			visibilityBuffer.SetData(new uint[Count]);
+            visibilityBuffer.name = nameof(visibilityBuffer) + ":" + visibilityBuffer.count;
+            visibilityBuffer.SetData(new uint[Count]);
 
 			DComputeShader.SetBuffer(cullKernelID, "_InstanceBuffer", instanceBuffer);
 			DComputeShader.SetBuffer(cullKernelID, "_VisibilityBuffer", visibilityBuffer);

@@ -35,7 +35,8 @@ namespace IndirectDraw
 				}
 			}
 			instanceBuffer = new ComputeBuffer(Count, InstancePara.SIZE);
-			instanceBuffer.SetData(paras);
+            instanceBuffer.name = nameof(instanceBuffer) + ":" + instanceBuffer.count;
+            instanceBuffer.SetData(paras);
 			DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
 		}
 		void Update()

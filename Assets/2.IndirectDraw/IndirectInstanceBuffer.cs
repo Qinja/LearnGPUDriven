@@ -15,7 +15,8 @@ namespace IndirectDraw
 		{
 			proxyBounds = new Bounds(Vector3.zero, 100.0f * Vector3.one);
 			argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
-			UpdateInstance();
+            argsBuffer.name = nameof(argsBuffer);
+            UpdateInstance();
 		}
 		void UpdateInstance()
 		{
@@ -34,7 +35,8 @@ namespace IndirectDraw
 				}
 			}
 			instanceBuffer = new ComputeBuffer(Count, InstancePara.SIZE);
-			instanceBuffer.SetData(paras);
+			instanceBuffer.name = nameof(instanceBuffer) + ":" + instanceBuffer.count;
+            instanceBuffer.SetData(paras);
 			DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
 			argsBuffer.SetData(new uint[5] { DMesh.GetIndexCount(0), (uint)Count, 0, 0, 0 });
 		}

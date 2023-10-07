@@ -14,7 +14,8 @@ namespace IndirectDraw
 		{
 			proxyBounds = new Bounds(Vector3.zero, 100.0f * Vector3.one);
 			argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
-			UpdateInstance();
+            argsBuffer.name = nameof(argsBuffer);
+            UpdateInstance();
 		}
 		void UpdateInstance()
 		{

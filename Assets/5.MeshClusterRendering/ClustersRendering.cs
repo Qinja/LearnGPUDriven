@@ -22,7 +22,8 @@ namespace MeshClusterRendering
 		{
 			var vertexData = DClusters.Vertices;
 			vertexBuffer = new ComputeBuffer(vertexData.Length, 3 * sizeof(float));
-			vertexBuffer.SetData(vertexData);
+            vertexBuffer.name = nameof(vertexBuffer) + ":" + vertexBuffer.count;
+            vertexBuffer.SetData(vertexData);
 			DMaterial.SetBuffer("_VertexBuffer", vertexBuffer);
 			DMaterial.SetInteger("_ClusterCount", DClusters.ClusterCount);
 		}
@@ -46,6 +47,7 @@ namespace MeshClusterRendering
 			}
 			instanceBuffer?.Release();
 			instanceBuffer = new ComputeBuffer(Count, InstancePara.SIZE);
+			instanceBuffer.name = nameof(instanceBuffer) + ":" + instanceBuffer.count;
 			instanceBuffer.SetData(instanceParas);
 			DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
 		}

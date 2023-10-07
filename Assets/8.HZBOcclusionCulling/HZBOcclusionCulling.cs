@@ -21,7 +21,8 @@ namespace HZBOcclusionCulling
 		{
 			proxyBounds = new Bounds(Vector3.zero, 1000.0f * Vector3.one);
 			argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
-			DMaterialHZBOcclusion.SetVector("_BoundsExtent", DMesh.bounds.extents);
+            argsBuffer.name = nameof(argsBuffer);
+            DMaterialHZBOcclusion.SetVector("_BoundsExtent", DMesh.bounds.extents);
 			DMaterialHZBOcclusion.SetVector("_BoundsCenter", DMesh.bounds.center);
 			DMaterialHZBOcclusion.SetBuffer("_ArgsBuffer", argsBuffer);
 			DHiZGenerator.HiZBufferUpdated += UpdateHiZBuffer;
@@ -68,9 +69,11 @@ namespace HZBOcclusionCulling
 			Graphics.ClearRandomWriteTargets();
 			instanceBuffer?.Release();
 			instanceBuffer = new ComputeBuffer(Count, InstancePara.SIZE);
-			instanceBuffer.SetData(instanceParas);
+			instanceBuffer.name = nameof(instanceBuffer) + ":" + instanceBuffer.count;
+            instanceBuffer.SetData(instanceParas);
 			visibilityBuffer?.Release();
 			visibilityBuffer = new ComputeBuffer(Count, sizeof(uint));
+            visibilityBuffer.name = nameof(visibilityBuffer) + ":" + visibilityBuffer.count;
             var visibilityData = new uint[Count];
 			for (uint i = 0; i < Count; i++) 
 			{ 
@@ -79,7 +82,7 @@ namespace HZBOcclusionCulling
 			visibilityBuffer.SetData(visibilityData);
 			argsBuffer.SetData(new uint[5] { DMesh.GetIndexCount(0), (uint)Count, 0, 0, 0 });
 
-			DMaterialHZBOcclusion.SetBuffer("_InstanceBuffer", instanceBuffer);
+            DMaterialHZBOcclusion.SetBuffer("_InstanceBuffer", instanceBuffer);
 			DMaterialHZBOcclusion.SetBuffer("_VisibilityBuffer", visibilityBuffer);
 			DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
 			DMaterial.SetBuffer("_VisibilityBuffer", visibilityBuffer);

@@ -14,6 +14,7 @@ namespace OcclusionCulling
 		{
 			proxyBounds = new Bounds(Vector3.zero, 1000.0f * Vector3.one);
 			debugBuffer = new ComputeBuffer(1, sizeof(uint));
+            debugBuffer.name = nameof(debugBuffer);
 			Graphics.SetRandomWriteTarget(1, debugBuffer);
 			initHash = Random.Range(0x12341234, 0x67896789);
 			debugBuffer.SetData(new uint[1] { (uint)initHash });

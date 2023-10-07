@@ -52,8 +52,10 @@ namespace MergeInstance
 				mergeVertexData[i + vertexDataA.Length] = vertexDataB[i];
 			}
 			vertexBuffer = new ComputeBuffer(mergeVertexData.Length, 3 * sizeof(float));
-			indexBuffer = new ComputeBuffer(mergeIndexData.Length, sizeof(int));
-			vertexBuffer.SetData(mergeVertexData);
+            vertexBuffer.name = nameof(vertexBuffer) + ":" + vertexBuffer.count;
+            indexBuffer.name = nameof(indexBuffer) + ":" + indexBuffer.count;
+            indexBuffer = new ComputeBuffer(mergeIndexData.Length, sizeof(int));
+            vertexBuffer.SetData(mergeVertexData);
 			indexBuffer.SetData(mergeIndexData);
 			DMaterial.SetBuffer("_VertexBuffer", vertexBuffer);
 			DMaterial.SetBuffer("_IndexBuffer", indexBuffer);
@@ -101,6 +103,7 @@ namespace MergeInstance
 			if (instanceBuffer == null)
 			{
 				instanceBuffer = new ComputeBuffer(125 * 2, InstancePara.SIZE);
+				instanceBuffer.name = nameof(instanceBuffer) + ":" + instanceBuffer.count;
 				DMaterial.SetBuffer("_InstanceBuffer", instanceBuffer);
 			}
 			instanceBuffer.SetData(instanceParas);
