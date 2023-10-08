@@ -11,6 +11,8 @@ Shader "LearnGPUDriven/Shader8.1.oC"
             #pragma target 4.5
             #pragma vertex vert
             #pragma fragment frag
+            #define FRUSTUM_CULL_EDGE 1.1
+            #define OCCLUSION_CULL_SCALE 1.1
 
             #include "UnityCG.cginc"
 
@@ -58,8 +60,8 @@ Shader "LearnGPUDriven/Shader8.1.oC"
                         boundsMaxClip = max(boundsMaxClip, cornerClip.xyz);
                     }
                 }
-                boundsMinClip = clamp(boundsMinClip, float3(-1, -1, 0), 1);
-                boundsMaxClip = clamp(boundsMaxClip, float3(-1, -1, 0), 1);
+                boundsMinClip = max(boundsMinClip, float3(-FRUSTUM_CULL_EDGE, -FRUSTUM_CULL_EDGE, 0));
+                boundsMaxClip = min(boundsMaxClip, float3(FRUSTUM_CULL_EDGE, FRUSTUM_CULL_EDGE, 1));
                 if (all(boundsMaxClip > boundsMinClip))
                 {
                     float4 boundsTexCoord = float4(0.5, -0.5, 0.5, -0.5) * float4(boundsMinClip.xy, boundsMaxClip.xy) + 0.5;
@@ -74,7 +76,7 @@ Shader "LearnGPUDriven/Shader8.1.oC"
                     depthSample4.w = _HiZBuffer.SampleLevel(sampler_HiZBuffer, boundsTexCoord.zw, boundsLevel).r;
                     float2 depthSample2 = min(depthSample4.xy, depthSample4.zw);
                     float depthSample = min(depthSample2.x, depthSample2.y);
-                    if (boundsMaxClip.z >= depthSample)
+                    if (boundsMaxClip.z * OCCLUSION_CULL_SCALE >= depthSample)
                     {
                         uint currentIndex;
                         InterlockedAdd(_ArgsBuffer[1], 1, currentIndex);
