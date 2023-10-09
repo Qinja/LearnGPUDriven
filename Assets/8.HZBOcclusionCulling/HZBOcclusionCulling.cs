@@ -32,6 +32,14 @@ namespace HZBOcclusionCulling
         private void UpdateHiZBuffer(RenderTexture HiZBuffer)
         {
             DMaterialHZBOcclusion.SetTexture("_HiZBuffer", HiZBuffer);
+            if(HiZBuffer == null)
+            {
+                DMaterialHZBOcclusion.DisableKeyword("ENABLE_OCCLUSION_CULLING");
+            }
+            else
+            {
+                DMaterialHZBOcclusion.EnableKeyword("ENABLE_OCCLUSION_CULLING");
+            }
         }
         private void InitCommandBuffer()
         {

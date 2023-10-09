@@ -11,8 +11,9 @@ Shader "LearnGPUDriven/Shader8.1.oC"
             #pragma target 4.5
             #pragma vertex vert
             #pragma fragment frag
-            #define FRUSTUM_CULL_EDGE 1.1
-            #define OCCLUSION_CULL_SCALE 1.1
+            #define FRUSTUM_CULLING_EDGE 1.1
+            #define OCCLUSION_CULLING_SCALE 1.1
+            #pragma multi_compile _ ENABLE_OCCLUSION_CULLING
 
             #include "UnityCG.cginc"
 
@@ -26,11 +27,11 @@ Shader "LearnGPUDriven/Shader8.1.oC"
             StructuredBuffer<InstancePara> _InstanceBuffer;
             float3 _BoundsExtent;
             float3 _BoundsCenter;
-            
+#ifdef ENABLE_OCCLUSION_CULLING
             Texture2D _HiZBuffer;
             SamplerState sampler_HiZBuffer;
             float4 _HiZBuffer_TexelSize;
-
+#endif
             void vert(uint vertexID : SV_VertexID)
             {
                 static float3 cubeCorner[8] =
@@ -60,10 +61,11 @@ Shader "LearnGPUDriven/Shader8.1.oC"
                         boundsMaxClip = max(boundsMaxClip, cornerClip.xyz);
                     }
                 }
-                boundsMinClip = max(boundsMinClip, float3(-FRUSTUM_CULL_EDGE, -FRUSTUM_CULL_EDGE, 0));
-                boundsMaxClip = min(boundsMaxClip, float3(FRUSTUM_CULL_EDGE, FRUSTUM_CULL_EDGE, 1));
+                boundsMinClip = max(boundsMinClip, float3(-FRUSTUM_CULLING_EDGE, -FRUSTUM_CULLING_EDGE, 0));
+                boundsMaxClip = min(boundsMaxClip, float3(FRUSTUM_CULLING_EDGE, FRUSTUM_CULLING_EDGE, 1));
                 if (all(boundsMaxClip > boundsMinClip))
                 {
+#ifdef ENABLE_OCCLUSION_CULLING
                     float4 boundsTexCoord = float4(0.5, -0.5, 0.5, -0.5) * float4(boundsMinClip.xy, boundsMaxClip.xy) + 0.5;
                     float2 boundsSizeTexCoord = boundsTexCoord.zy - boundsTexCoord.xw;
                     float2 boundsSizeScreen = boundsSizeTexCoord * _HiZBuffer_TexelSize.zw;
@@ -76,7 +78,8 @@ Shader "LearnGPUDriven/Shader8.1.oC"
                     depthSample4.w = _HiZBuffer.SampleLevel(sampler_HiZBuffer, boundsTexCoord.zw, boundsLevel).r;
                     float2 depthSample2 = min(depthSample4.xy, depthSample4.zw);
                     float depthSample = min(depthSample2.x, depthSample2.y);
-                    if (boundsMaxClip.z * OCCLUSION_CULL_SCALE >= depthSample)
+                    if (boundsMaxClip.z * OCCLUSION_CULLING_SCALE >= depthSample)
+#endif
                     {
                         uint currentIndex;
                         InterlockedAdd(_ArgsBuffer[1], 1, currentIndex);
