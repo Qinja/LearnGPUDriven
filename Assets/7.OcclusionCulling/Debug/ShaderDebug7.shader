@@ -42,10 +42,9 @@ Shader "LearnGPUDriven/ShaderDebug7"
             }
 
             [earlydepthstencil]
-            fixed4 frag(v2f i) : SV_Target
+            void frag(v2f i)
             {
                 _DebugBuffer[0] = _Hash;
-                return 1;
             }
             ENDCG
         }

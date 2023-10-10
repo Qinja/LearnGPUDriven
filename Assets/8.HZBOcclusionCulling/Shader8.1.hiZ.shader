@@ -25,7 +25,6 @@ Shader "LearnGPUDriven/Shader8.1.hiZ"
 
             Texture2D _DepthTex;
             SamplerState sampler_DepthTex;
-            float4 _DepthTex_TexelSize;
 
             v2f vert(appdata v)
             {

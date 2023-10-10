@@ -63,7 +63,7 @@ Shader "LearnGPUDriven/Shader7.2.preZ"
             }
 
             [earlydepthstencil]
-            fixed4 frag(v2f i) : SV_Target
+            void frag(v2f i)
             {
                 uint frameIndex;
                 InterlockedMax(_VisibilityFrameIndexBuffer[i.instanceID], _CurrentFrameIndex, frameIndex);
@@ -73,7 +73,6 @@ Shader "LearnGPUDriven/Shader7.2.preZ"
                     InterlockedAdd(_ArgsBuffer[1], 1, currentIndex);
                     _VisibilityBuffer[currentIndex] = i.instanceID;
                 }
-                return 1;
             }
             ENDCG
         }

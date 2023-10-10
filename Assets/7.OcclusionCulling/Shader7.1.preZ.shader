@@ -61,10 +61,9 @@ Shader "LearnGPUDriven/Shader7.1.preZ"
             }
 
             [earlydepthstencil]
-            fixed4 frag(v2f i) : SV_Target
+            void frag(v2f i)
             {
                 _VisibilityFrameIndexBuffer[i.instanceID] = _CurrentFrameIndex;
-                return 1;
             }
             ENDCG
         }
