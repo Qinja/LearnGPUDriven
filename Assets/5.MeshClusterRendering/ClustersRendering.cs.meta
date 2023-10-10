@@ -3,7 +3,9 @@ guid: 5f42397f409bbd5498f3a4b0fab14dcd
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - DClusters: {instanceID: 0}
+  - DMaterial: {fileID: 2100000, guid: bd114d5c9b9e53f45a3d8f8fbd628bc9, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

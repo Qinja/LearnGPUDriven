@@ -3,7 +3,10 @@ guid: 19f9e92c9a534b749ae125cf179fb67b
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - DMeshA: {instanceID: 0}
+  - DMeshB: {instanceID: 0}
+  - DMaterial: {fileID: 2100000, guid: b18471e09d358164fa340e0c9e09fffc, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

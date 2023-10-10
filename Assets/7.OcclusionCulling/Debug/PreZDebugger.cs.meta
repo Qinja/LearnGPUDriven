@@ -3,7 +3,9 @@ guid: 5546df1c9b837da4484040ffc35ec0da
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - DCamera: {instanceID: 0}
+  - DMaterial: {fileID: 2100000, guid: 3e893e5e5214b05468ddb082e5a599b1, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

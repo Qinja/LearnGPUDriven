@@ -3,7 +3,11 @@ guid: ebf60393c3d54f24eaf7613b00255b57
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - DCamera: {instanceID: 0}
+  - DClusters: {instanceID: 0}
+  - DMaterial: {fileID: 2100000, guid: e3135fc7e7242f1469ea6b8e90d4faf4, type: 2}
+  - DComputeShader: {fileID: 7200000, guid: 41144b2d0646f4a43be8fe402bfdf55e, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
